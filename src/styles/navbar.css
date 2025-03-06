@@ -1,0 +1,22 @@
+.navbar {
+    background-color: #007bff;
+  }
+  
+  .navbar .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .navbar .nav-link {
+    color: white !important;
+  }
+  
+  .navbar .btn-outline-light {
+    border-color: white;
+    color: white;
+  }
+  
+  .navbar .btn-outline-light:hover {
+    background-color: white;
+    color: #007bff;
+  }
