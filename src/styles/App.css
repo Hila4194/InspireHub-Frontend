@@ -1,0 +1,86 @@
+/* === GLOBAL STYLES === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* === BODY === */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* === CONTAINER === */
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* === HEADINGS === */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* === BUTTONS === */
+button {
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* === NAVBAR === */
+.navbar {
+  background-color: #007bff;
+  padding: 10px 0;
+}
+
+.navbar a {
+  color: white !important;
+  font-weight: bold;
+}
+
+.navbar .btn-outline-light:hover {
+  background-color: white;
+  color: #007bff;
+}
+
+/* === FORMS === */
+.form-control {
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* === CARDS === */
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* === FOOTER === */
+.footer {
+  background-color: #343a40;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  margin-top: 30px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
