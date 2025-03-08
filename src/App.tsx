@@ -1,7 +1,8 @@
 import AppRoutes from "./routes";
-import AuthProvider from "./context/Authcontext";
+import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import "./styles/App.css";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 const App = () => {
   console.log("App component is rendering!");

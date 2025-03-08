@@ -1,35 +1,76 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/Authcontext";
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext)!;
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post("http://localhost:5000/auth/login", { email, password });
-      login(res.data.token, res.data.user);
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Login failed:", error);
+    const authContext = useContext(AuthContext);
+    if (!authContext) {
+        throw new Error("AuthContext is null");
     }
-  };
+    const { login } = authContext;
+    const navigate = useNavigate();
 
-  return (
-    <div className="container mt-5">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control mb-2"/>
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control mb-2"/>
-        <button type="submit" className="btn btn-primary">Login</button>
-      </form>
-    </div>
-  );
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+
+        if (!username || !password) {
+            setError("Please enter your username and password.");
+            return;
+        }
+
+        try {
+            const response = await axios.post("http://localhost:5000/api/auth/login", {
+                username,
+                password
+            });
+
+            login(response.data);
+            navigate("/dashboard");
+        } catch{
+            setError("Invalid username or password. Please try again.");
+        }
+    };
+
+    return (
+        <div className="container d-flex justify-content-center align-items-center vh-100">
+            <div className="card p-4 shadow-lg" style={{ width: "400px" }}>
+                <h2 className="text-center">Login</h2>
+                {error && <div className="alert alert-danger text-center">{error}</div>}
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <label className="form-label">Username</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter your username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Password</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-primary w-100">Login</button>
+                </form>
+                <div className="text-center mt-3">
+                    <p>Don't have an account? <a href="/register">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default LoginPage;

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { AuthContext } from "../context/Authcontext";
+import { AuthContext } from "../context/AuthContext";
 import "../styles/profile.css";
 
 const Profile = () => {
@@ -11,7 +11,7 @@ const Profile = () => {
         <h2>User Profile</h2>
         {user ? (
           <>
-            <h4 className="fw-bold">{user.email}</h4>
+            <h4 className="fw-bold">{user.username}</h4>
             <p className="text-muted">User ID: {user._id}</p>
           </>
         ) : (
