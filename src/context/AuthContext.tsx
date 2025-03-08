@@ -1,40 +1,71 @@
-import React, { createContext, useState } from "react";
-
-interface User {
-  _id: string;
-  email: string;
-}
+import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
 interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  login: (token: string, user: User) => void;
-  logout: () => void;
+    user: User | null;
+    login: (userData: LoginData) => Promise<void>;
+    logout: () => void;
+}
+
+interface User {
+    _id: string;
+    username: string;
+    profilePicture?: string;
+    accessToken: string;
+}
+
+interface LoginData {
+    username: string;
+    password: string;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [user, setUser] = useState<User | null>(() => {
+        const storedUser = localStorage.getItem("user");
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
 
-  const login = (newToken: string, userData: User) => {
-    localStorage.setItem("token", newToken);
-    setToken(newToken);
-    setUser(userData);
-  };
+    // Login function
+    const login = async (userData: LoginData) => {
+        try {
+            const response = await axios.post("http://localhost:5000/api/auth/login", {
+                username: userData.username,
+                password: userData.password,
+            });
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken(null);
-    setUser(null);
-  };
+            const loggedInUser: User = {
+                _id: response.data._id,
+                username: response.data.username,
+                profilePicture: response.data.profilePicture,
+                accessToken: response.data.accessToken,
+            };
 
-  return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+            setUser(loggedInUser);
+            localStorage.setItem("user", JSON.stringify(loggedInUser));
+        } catch {
+            throw new Error("Invalid username or password");
+        }
+    };
+
+    // Logout function
+    const logout = () => {
+        setUser(null);
+        localStorage.removeItem("user");
+    };
+
+    // Automatically load user from localStorage when the app starts
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
+    return (
+        <AuthContext.Provider value={{ user, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
-
-export default AuthProvider;
