@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/register.css";
 import defaultAvatar from "../assets/default-avatar.png"; // Import default avatar
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const RegisterPage = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -54,7 +56,7 @@ const RegisterPage = () => {
     setMessage("");
 
     if (!validateInputs()) {
-      return; // Stop submission if validation fails
+        return; // Stop submission if validation fails
     }
 
     const formData = new FormData();
@@ -64,20 +66,34 @@ const RegisterPage = () => {
     if (profilePicture) formData.append("profilePicture", profilePicture);
 
     try {
-      const response = await axios.post("http://localhost:5000/auth/register", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+        const response = await axios.post(`${API_BASE_URL}/auth/register`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
 
-      setMessage(response.data.message);
-      navigate("/login"); // Redirect to Login Page after successful registration
+        console.log("✅ Registration Response:", response);  // Debugging Response
+        console.log("✅ Response Status:", response.status); // Check if it's 201
+        console.log("✅ Response Data:", response.data); // Check what the backend sends
+
+        if (response.status === 201) {
+            setMessage("Registration successful! Redirecting...");
+            setTimeout(() => {
+                navigate("/login");
+            }, 1500);
+        } else {
+            setMessage(response.data.message || "Registration failed");
+        }
     } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        setMessage(error.response?.data?.message || "Registration failed");
-      } else {
-        setMessage("An unexpected error occurred");
-      }
+        if (axios.isAxiosError(error)) {
+            console.error("❌ Registration failed:", error.response?.data);
+            console.error("❌ Error Status:", error.response?.status);
+
+            setMessage(error.response?.data?.message || "Registration failed");
+        } else {
+            console.error("❌ Unexpected Error:", error);
+            setMessage("An unexpected error occurred");
+        }
     }
-  };
+};
 
   return (
     <div className="register-container">
@@ -144,7 +160,7 @@ const RegisterPage = () => {
 
           <button type="submit" className="btn btn-primary w-100">Register</button>
         </form>
-        {message && <p className="mt-3 text-danger">{message}</p>}
+        {message && <p className="mt-3 text-success">{message}</p>}
         <p className="mt-3">
           Already have an account? <Link to="/login">Login here</Link>
         </p>
