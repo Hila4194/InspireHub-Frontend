@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const LoginPage = () => {
     const authContext = useContext(AuthContext);
     if (!authContext) {
@@ -23,18 +25,14 @@ const LoginPage = () => {
             setError("Please enter your username and password.");
             return;
         }
-
         try {
-            const response = await axios.post("http://localhost:5000/api/auth/login", {
-                username,
-                password
-            });
-
-            login(response.data);
-            navigate("/dashboard");
-        } catch{
-            setError("Invalid username or password. Please try again.");
-        }
+          const response = await axios.post(`${API_BASE_URL}/auth/login`, { username, password });
+      
+          login(response.data); // Now passing the entire user data
+          navigate("/dashboard");
+      } catch {
+          setError("Invalid username or password. Please try again.");
+      }
     };
 
     return (
@@ -51,6 +49,7 @@ const LoginPage = () => {
                             placeholder="Enter your username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="mb-3">
@@ -61,6 +60,7 @@ const LoginPage = () => {
                             placeholder="Enter your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Login</button>

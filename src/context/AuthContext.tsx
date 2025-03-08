@@ -1,71 +1,67 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 
-interface AuthContextType {
-    user: User | null;
-    login: (userData: LoginData) => Promise<void>;
-    logout: () => void;
-}
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface User {
-    _id: string;
-    username: string;
-    profilePicture?: string;
-    accessToken: string;
+  _id: string;
+  username: string;
+  email: string;
+  profilePicture: string;
+  accessToken: string;
 }
 
-interface LoginData {
-    username: string;
-    password: string;
+interface AuthContextType {
+  user: User | null;
+  login: (userData: User) => void; // 🔄 Accepts user data instead of username/password
+  register: (formData: FormData) => Promise<void>;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(() => {
-        const storedUser = localStorage.getItem("user");
-        return storedUser ? JSON.parse(storedUser) : null;
-    });
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
 
-    // Login function
-    const login = async (userData: LoginData) => {
-        try {
-            const response = await axios.post("http://localhost:5000/api/auth/login", {
-                username: userData.username,
-                password: userData.password,
-            });
+  // ✅ Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
-            const loggedInUser: User = {
-                _id: response.data._id,
-                username: response.data.username,
-                profilePicture: response.data.profilePicture,
-                accessToken: response.data.accessToken,
-            };
+  // 🔵 **Login Function**
+  const login = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+    console.log("Login successful:", userData);
+  };
 
-            setUser(loggedInUser);
-            localStorage.setItem("user", JSON.stringify(loggedInUser));
-        } catch {
-            throw new Error("Invalid username or password");
-        }
-    };
+  // 🟢 **Register Function**
+  const register = async (formData: FormData) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/auth/register`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
 
-    // Logout function
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem("user");
-    };
+        console.log("Registration successful:", response.data);
+        window.location.href = "/login"; // 🔄 Redirects to login after success
+    } catch (error) {
+        console.error("Registration failed:", error);
+        throw new Error("Registration failed");
+    }
+};
 
-    // Automatically load user from localStorage when the app starts
-    useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-    }, []);
+  // 🔴 **Logout Function**
+  const logout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+  };
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ user, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
