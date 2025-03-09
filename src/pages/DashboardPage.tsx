@@ -26,7 +26,7 @@ const Dashboard = () => {
   ? user.profilePicture
   : `http://localhost:4040/uploads/${user?.profilePicture}`;
 
-  console.log("🔍 Profile Picture URL:", profilePictureUrl); // Debugging
+  console.log("🔍 Profile Picture URL:", profilePictureUrl);
 
   // ✅ Create a new post
   const createPost = async (e: React.FormEvent) => {
@@ -43,9 +43,8 @@ const Dashboard = () => {
     }
 
     try {
-      const res = await apiClient.post(
-        "/posts",
-        { title, content, sender: user._id }, // ✅ Send user ID
+      const res = await apiClient.post("/posts",
+        { title, content, sender: user._id },
         { headers: { Authorization: `JWT ${user.accessToken}` } }
       );
       setPosts([res.data, ...posts]);
@@ -70,7 +69,7 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ Fix Edit Post (500 Error)
+  // ✅ Edit a Post
   const editPost = async (postId: string) => {
     const newTitle = prompt("Enter new title:");
     const newContent = prompt("Enter new content:");
@@ -79,7 +78,7 @@ const Dashboard = () => {
     try {
       const res = await apiClient.put(
         `/posts/${postId}`,
-        { title: newTitle, content: newContent, sender: user?._id }, // ✅ Ensure sender is included
+        { title: newTitle, content: newContent, sender: user?._id },
         { headers: { Authorization: `JWT ${user?.accessToken}` } }
       );
       setPosts(posts.map((post) => (post._id === postId ? res.data : post)));
@@ -92,7 +91,11 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* ✅ User Profile Info */}
       <div className="dashboard-header">
-        <div className="profile-info">
+      <div className="profile-info">
+          {/* ✅ Ensure the profile picture displays correctly */}
+          {user?.profilePicture && (
+            <img src={user.profilePicture} alt="Profile" className="profile-img" />
+          )}
           <h3>Welcome, {user?.username}!</h3>
         </div>
         <button onClick={logout} className="btn btn-danger">Logout</button>
