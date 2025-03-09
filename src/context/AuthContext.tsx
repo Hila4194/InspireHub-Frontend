@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
-import axios from "axios";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import apiClient from "../services/api-client";
+import { AxiosError } from "axios";
 
 interface User {
   _id: string;
@@ -13,7 +12,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (userData: User) => void; // 🔄 Accepts user data instead of username/password
+  login: (username: string, password: string) => Promise<void>;
   register: (formData: FormData) => Promise<void>;
   logout: () => void;
 }
@@ -32,31 +31,42 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   // 🔵 **Login Function**
-  const login = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
-    console.log("Login successful:", userData);
-  };
+  const login = async (username: string, password: string) => {
+    try {
+      const response = await apiClient.post<User>("/auth/login", { username, password });
+      const userData = response.data; // Extract full user object
+  
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData)); // Store the full user object
+  
+      console.log("✅ Login successful:", userData);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.error("❌ Login failed:", axiosError.response?.data || axiosError);
+      throw new Error((axiosError.response?.data as { message: string })?.message || "Login failed");
+    }
+  };  
 
   // 🟢 **Register Function**
   const register = async (formData: FormData) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/auth/register`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        console.log("Registration successful:", response.data);
-        window.location.href = "/login"; // 🔄 Redirects to login after success
+      const response = await apiClient.post("/auth/register", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Registration successful:", response.data);
+      window.location.href = "/login"; // 🔄 Redirect to login after success
     } catch (error) {
-        console.error("Registration failed:", error);
-        throw new Error("Registration failed");
+      const axiosError = error as AxiosError;
+      console.error("❌ Registration failed:", axiosError.response?.data || axiosError);
+      throw new Error((axiosError.response?.data as { message: string })?.message || "Registration failed");
     }
-};
+  };
 
   // 🔴 **Logout Function**
   const logout = () => {
     localStorage.removeItem("user");
     setUser(null);
+    console.log("🔴 Logged out successfully");
   };
 
   return (
