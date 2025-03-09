@@ -1,10 +1,23 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import apiClient from "../services/api-client";
+import axios from "axios";
 import "../styles/register.css";
-import defaultAvatar from "../assets/default-avatar.png"; // Import default avatar
+import defaultAvatar from "../assets/default-avatar.png";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// Zod Schema for Validation
+const registerSchema = z.object({
+  username: z.string()
+    .min(3, { message: "Username must be at least 3 characters long" })
+    .regex(/^(?=.*[a-zA-Z])(?=.*\d).+$/, { message: "Username must contain both letters and numbers" }),
+
+  email: z.string()
+    .email({ message: "Invalid email format" }),
+
+  password: z.string()
+    .min(6, { message: "Password must be at least 6 characters long" }),
+});
 
 const RegisterPage = () => {
   const [username, setUsername] = useState("");
@@ -27,27 +40,21 @@ const RegisterPage = () => {
     }
   };
 
-  // Validate Inputs
+  // Validate Inputs using Zod
   const validateInputs = () => {
-    const newErrors: { username?: string; email?: string; password?: string } = {};
-
-    // Username validation: must contain letters and numbers
-    if (!/^(?=.*[a-zA-Z])(?=.*\d).+$/.test(username)) {
-      newErrors.username = "Username must contain both letters and numbers";
+    const result = registerSchema.safeParse({ username, email, password });
+    if (!result.success) {
+      const newErrors: { username?: string; email?: string; password?: string } = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0] === "username") newErrors.username = err.message;
+        if (err.path[0] === "email") newErrors.email = err.message;
+        if (err.path[0] === "password") newErrors.password = err.message;
+      });
+      setErrors(newErrors);
+      return false;
     }
-
-    // Email validation: must contain @ and follow standard email format
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    // Password validation: must be at least 6 characters
-    if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters long";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Return true if no errors
+    setErrors({});
+    return true;
   };
 
   // Handle Registration
@@ -56,7 +63,7 @@ const RegisterPage = () => {
     setMessage("");
 
     if (!validateInputs()) {
-        return; // Stop submission if validation fails
+      return; // Stop submission if validation fails
     }
 
     const formData = new FormData();
@@ -66,39 +73,33 @@ const RegisterPage = () => {
     if (profilePicture) formData.append("profilePicture", profilePicture);
 
     try {
-        const response = await axios.post(`${API_BASE_URL}/auth/register`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
+      const response = await apiClient.post("/auth/register", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-        console.log("✅ Registration Response:", response);  // Debugging Response
-        console.log("✅ Response Status:", response.status); // Check if it's 201
-        console.log("✅ Response Data:", response.data); // Check what the backend sends
-
-        if (response.status === 201) {
-            setMessage("Registration successful! Redirecting...");
-            setTimeout(() => {
-                navigate("/login");
-            }, 1500);
-        } else {
-            setMessage(response.data.message || "Registration failed");
-        }
-    } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-            console.error("❌ Registration failed:", error.response?.data);
-            console.error("❌ Error Status:", error.response?.status);
-
-            setMessage(error.response?.data?.message || "Registration failed");
-        } else {
-            console.error("❌ Unexpected Error:", error);
-            setMessage("An unexpected error occurred");
-        }
-    }
-};
+      console.log("✅ Registration Response:", response);
+      if (response.status === 201) {
+        setMessage("✅ Registration successful! Redirecting...");
+        setTimeout(() => navigate("/login"), 1500);
+      } else {
+        setMessage(response.data.message || "❌ Registration failed");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("❌ Registration failed:", error.response?.data);
+        setMessage(error.response?.data?.message || "❌ Registration failed");
+      } else {
+        console.error("❌ Unexpected Error:", error);
+        setMessage("An unexpected error occurred");
+      }
+    }    
+  };
 
   return (
     <div className="register-container">
       <div className="register-card">
         <h2>Register</h2>
+        
         {/* Profile Picture Preview */}
         <div className="profile-picture-container">
           <img src={previewImage} alt="Profile Preview" className="profile-picture" />
@@ -160,7 +161,9 @@ const RegisterPage = () => {
 
           <button type="submit" className="btn btn-primary w-100">Register</button>
         </form>
-        {message && <p className="mt-3 text-success">{message}</p>}
+        
+        {message && <p className={`mt-3 ${message.startsWith("✅") ? "text-success" : "text-danger"}`}>{message}</p>}
+        
         <p className="mt-3">
           Already have an account? <Link to="/login">Login here</Link>
         </p>

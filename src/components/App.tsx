@@ -1,7 +1,7 @@
-import AppRoutes from "./routes";
-import { AuthProvider } from "./context/AuthContext";
-import Navbar from "./components/Navbar";
-import "./styles/App.css";
+import AppRoutes from "../routes";
+import { AuthProvider } from "../context/AuthContext";
+import Navbar from "./Navbar";
+import "../styles/App.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 const App = () => {

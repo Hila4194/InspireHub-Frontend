@@ -1,9 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import "../styles/login.css";
 
 const LoginPage = () => {
     const authContext = useContext(AuthContext);
@@ -20,28 +18,28 @@ const LoginPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
-
+    
         if (!username || !password) {
             setError("Please enter your username and password.");
             return;
         }
+    
         try {
-          const response = await axios.post(`${API_BASE_URL}/auth/login`, { username, password });
-      
-          login(response.data); // Now passing the entire user data
-          navigate("/dashboard");
-      } catch {
-          setError("Invalid username or password. Please try again.");
-      }
-    };
+            await login(username, password); // ✅ Pass username and password instead of response.data
+            navigate("/dashboard");
+        } catch (error) {
+            setError("Invalid username or password. Please try again.");
+            console.error("❌ Login Error:", error);
+        }
+    };    
 
     return (
-        <div className="container d-flex justify-content-center align-items-center vh-100">
-            <div className="card p-4 shadow-lg" style={{ width: "400px" }}>
+        <div className="login-container">
+            <div className="login-card">
                 <h2 className="text-center">Login</h2>
                 {error && <div className="alert alert-danger text-center">{error}</div>}
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
+                <form onSubmit={handleSubmit} className="login-form">
+                    <div className="form-group">
                         <label className="form-label">Username</label>
                         <input
                             type="text"
@@ -52,7 +50,7 @@ const LoginPage = () => {
                             required
                         />
                     </div>
-                    <div className="mb-3">
+                    <div className="form-group">
                         <label className="form-label">Password</label>
                         <input
                             type="password"
@@ -70,7 +68,7 @@ const LoginPage = () => {
                 </div>
             </div>
         </div>
-    );
+    );    
 };
 
 export default LoginPage;
