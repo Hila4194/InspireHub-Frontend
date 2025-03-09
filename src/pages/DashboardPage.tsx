@@ -1,44 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import usePosts from "../hooks/usePosts"; // ✅ Use custom hook
 import apiClient from "../services/api-client";
-import PostsList from "../components/PostsList";
 import "../styles/dashboard.css";
-
-interface Post {
-  _id: string;
-  title: string;
-  content: string;
-}
 
 const Dashboard = () => {
   const authContext = useContext(AuthContext);
   if (!authContext) throw new Error("AuthContext is null");
 
   const { user, logout } = authContext;
-  const [posts, setPosts] = useState<Post[]>([]);
+  const { posts, setPosts, isLoading, error } = usePosts(); // ✅ Use filtered posts
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    } else {
-      fetchPosts();
-    }
-  }, [user]);
-
-  const fetchPosts = async () => {
-    try {
-      const res = await apiClient.get<Post[]>("/posts", {
-        headers: { Authorization: `JWT ${user?.accessToken}` }, // 🔹 Ensure JWT authentication
-      });
-      setPosts(res.data);
-    } catch (error) {
-      console.error("❌ Error fetching posts:", error);
-    }
-  };
+  if (!user) {
+    navigate("/login");
+  }
 
   const createPost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,11 +25,17 @@ const Dashboard = () => {
       alert("❌ Title and content are required.");
       return;
     }
+  
+    if (!user) {  // ✅ Ensure user is logged in before making the request
+      console.error("❌ Error: User is not logged in");
+      alert("You must be logged in to create a post.");
+      return;
+    }
+  
     try {
-      const res = await apiClient.post(
-        "/api/posts",
-        { title, content },
-        { headers: { Authorization: `JWT ${user?.accessToken}` } }
+      const res = await apiClient.post("/posts",
+        { title, content, sender: user._id }, // ✅ Send user ID
+        { headers: { Authorization: `JWT ${user.accessToken}` } }
       );
       setPosts([res.data, ...posts]);
       setTitle("");
@@ -58,7 +43,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error("❌ Error creating post:", error);
     }
-  };
+  };  
 
   return (
     <div className="dashboard-container">
@@ -67,7 +52,6 @@ const Dashboard = () => {
         <button onClick={logout} className="btn btn-danger">Logout</button>
       </div>
 
-      {/* 🔹 Create a New Post */}
       <div className="create-post-card">
         <h3>Create a New Post</h3>
         <form onSubmit={createPost}>
@@ -88,10 +72,23 @@ const Dashboard = () => {
         </form>
       </div>
 
-      {/* 🔹 Display Recent Posts */}
-      <h3 className="mt-4">Recent Posts</h3>
-      <PostsList />
-
+      <h3 className="mt-4">Your Posts</h3>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p className="text-danger">{error}</p>
+      ) : (
+        posts.length > 0 ? (
+          posts.map((post) => (
+            <div key={post._id} className="post-card">
+              <h5>{post.title}</h5>
+              <p>{post.content}</p>
+            </div>
+          ))
+        ) : (
+          <p>No posts yet.</p>
+        )
+      )}
     </div>
   );
 };
