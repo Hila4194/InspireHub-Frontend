@@ -1,23 +1,36 @@
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useState, useEffect, ReactNode, useContext } from "react";
 import apiClient from "../services/api-client";
 import { AxiosError } from "axios";
 
+// ✅ User Interface
 interface User {
   _id: string;
   username: string;
   email: string;
   profilePicture: string;
   accessToken: string;
+  refreshToken: string;
 }
 
+// ✅ AuthContext Type
 interface AuthContextType {
   user: User | null;
   login: (username: string, password: string) => Promise<void>;
   register: (formData: FormData) => Promise<void>;
   logout: () => void;
+  refreshAccessToken: () => Promise<string | null>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
+
+// ✅ Custom Hook for easy access to AuthContext
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -34,18 +47,45 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (username: string, password: string) => {
     try {
       const response = await apiClient.post<User>("/auth/login", { username, password });
-      const userData = response.data; // Extract full user object
-  
+      const userData = response.data;
+
       setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData)); // Store the full user object
-  
-      console.log("✅ Login successful:", userData);
+      localStorage.setItem("user", JSON.stringify(userData)); // Store full user object
+
+      console.log("✅ Login successful, Token:", userData.accessToken);
     } catch (error) {
       const axiosError = error as AxiosError;
       console.error("❌ Login failed:", axiosError.response?.data || axiosError);
       throw new Error((axiosError.response?.data as { message: string })?.message || "Login failed");
     }
-  };  
+  };
+
+  // 🔄 **Refresh Token Function**
+  const refreshAccessToken = async (): Promise<string | null> => {
+    try {
+      if (!user?.refreshToken) {
+        console.warn("⚠️ No refresh token available");
+        logout();
+        return null;
+      }
+
+      const response = await apiClient.post<{ accessToken: string }>("/auth/refresh-token", {
+        token: user.refreshToken,
+      });
+
+      const newAccessToken = response.data.accessToken;
+      setUser((prevUser) => (prevUser ? { ...prevUser, accessToken: newAccessToken } : null));
+
+      localStorage.setItem("user", JSON.stringify({ ...user, accessToken: newAccessToken }));
+
+      console.log("🔄 Access token refreshed:", newAccessToken);
+      return newAccessToken;
+    } catch (error) {
+      console.error("❌ Failed to refresh token:", error);
+      logout();
+      return null;
+    }
+  };
 
   // 🟢 **Register Function**
   const register = async (formData: FormData) => {
@@ -70,7 +110,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout, refreshAccessToken }}>
       {children}
     </AuthContext.Provider>
   );

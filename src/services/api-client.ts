@@ -1,8 +1,64 @@
-import axios, { CanceledError } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, CanceledError } from "axios";
+import { useAuth } from "../context/AuthContext";
 
 export { CanceledError };
 
+// ✅ Set base URL for API requests
 const apiClient = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL, // ✅ Ensure it points to `/api`
+  baseURL: import.meta.env.VITE_API_BASE_URL, 
 });
+
+// ✅ Request Interceptor - Attach Authorization Header
+apiClient.interceptors.request.use((config) => {
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    const user = JSON.parse(storedUser);
+    if (user?.accessToken) {
+      config.headers.Authorization = `JWT ${user.accessToken}`;
+    }
+  }
+  return config;
+});
+
+// ✅ Response Interceptor - Auto Refresh Token on 401
+apiClient.interceptors.response.use(
+  (response) => response, // Pass successful responses through
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+
+    // 🔄 If unauthorized (401) and we haven't retried yet, refresh token
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) throw new Error("No user data found");
+
+        const user = JSON.parse(storedUser);
+        if (!user?.refreshToken) throw new Error("No refresh token available");
+
+        const refreshResponse = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh-token`, {
+          token: user.refreshToken,
+        });
+
+        const newAccessToken = refreshResponse.data.accessToken;
+
+        // ✅ Update user data in localStorage
+        const updatedUser = { ...user, accessToken: newAccessToken };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+
+        // ✅ Retry original request with new token
+        originalRequest.headers = { ...originalRequest.headers, Authorization: `JWT ${newAccessToken}` };
+        return axios(originalRequest);
+      } catch (refreshError) {
+        console.error("❌ Refresh token failed, logging out:", refreshError);
+        useAuth().logout();
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default apiClient;
