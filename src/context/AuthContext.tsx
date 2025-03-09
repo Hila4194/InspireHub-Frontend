@@ -48,18 +48,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const response = await apiClient.post<User>("/auth/login", { username, password });
       const userData = response.data;
-
+  
+      // Ensure the profile picture URL is absolute
+      if (userData.profilePicture && !userData.profilePicture.startsWith("http")) {
+        userData.profilePicture = `${import.meta.env.VITE_API_BASE_URL}${userData.profilePicture}`;
+      }
+  
       setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData)); // Store full user object
-
-      console.log("✅ Login successful, Token:", userData.accessToken);
+      localStorage.setItem("user", JSON.stringify(userData));
     } catch (error) {
-      const axiosError = error as AxiosError;
-      console.error("❌ Login failed:", axiosError.response?.data || axiosError);
-      throw new Error((axiosError.response?.data as { message: string })?.message || "Login failed");
+      console.error("❌ Login failed:", error);
+      throw new Error("Login failed");
     }
   };
-
+    
   // 🔄 **Refresh Token Function**
   const refreshAccessToken = async (): Promise<string | null> => {
     try {

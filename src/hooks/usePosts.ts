@@ -1,29 +1,31 @@
 import { useEffect, useState } from "react";
 import apiClient, { CanceledError } from "../services/api-client";
-import { useAuth } from "../context/AuthContext"; // ✅ Import useAuth
+import { useAuth } from "../context/AuthContext";
 
 export interface Post {
   _id: string;
   title: string;
   content: string;
   sender: string;
+  likes: number;
+  comments: { _id: string; content: string; sender: string }[];
 }
 
 const usePosts = () => {
-  const { user } = useAuth(); // ✅ Get logged-in user
+  const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!user) return; // ✅ Prevent API call if no user is logged in
-
+    if (!user) return;
     const controller = new AbortController();
 
     const fetchPosts = async () => {
       try {
         const response = await apiClient.get<Post[]>(`/posts/sender/${user._id}`, {
-          signal: controller.signal, 
+          signal: controller.signal,
+          headers: { Authorization: `JWT ${user.accessToken}` },
         });
         setPosts(response.data);
       } catch (error) {
@@ -36,9 +38,8 @@ const usePosts = () => {
     };
 
     fetchPosts();
-
     return () => controller.abort();
-  }, [user]); // ✅ Fetch only when user changes
+  }, [user]);
 
   return { posts, setPosts, error, isLoading };
 };
