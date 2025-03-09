@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect, ReactNode, useContext } from
 import apiClient from "../services/api-client";
 import { AxiosError } from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 // ✅ User Interface
 interface User {
   _id: string;
@@ -15,15 +17,16 @@ interface User {
 // ✅ AuthContext Type
 interface AuthContextType {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>; // 🔹 Allow updates to user state
   login: (username: string, password: string) => Promise<void>;
   register: (formData: FormData) => Promise<void>;
   logout: () => void;
   refreshAccessToken: () => Promise<string | null>;
+  updateProfile: (updatedData: Partial<User & { profilePicture?: File }>) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-// ✅ Custom Hook for easy access to AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -35,11 +38,17 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  // ✅ Load user from localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+
+      // ✅ Ensure the profile picture URL is absolute
+      if (parsedUser.profilePicture && !parsedUser.profilePicture.startsWith("http")) {
+        parsedUser.profilePicture = `${API_BASE_URL}${parsedUser.profilePicture}`;
+      }
+
+      setUser(parsedUser);
     }
   }, []);
 
@@ -48,12 +57,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const response = await apiClient.post<User>("/auth/login", { username, password });
       const userData = response.data;
-  
-      // Ensure the profile picture URL is absolute
+
+      // ✅ Ensure the profile picture URL is absolute
       if (userData.profilePicture && !userData.profilePicture.startsWith("http")) {
-        userData.profilePicture = `${import.meta.env.VITE_API_BASE_URL}${userData.profilePicture}`;
+        userData.profilePicture = `${API_BASE_URL}${userData.profilePicture}`;
       }
-  
+
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
     } catch (error) {
@@ -61,7 +70,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw new Error("Login failed");
     }
   };
-    
+
   // 🔄 **Refresh Token Function**
   const refreshAccessToken = async (): Promise<string | null> => {
     try {
@@ -76,7 +85,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
 
       const newAccessToken = response.data.accessToken;
-      setUser((prevUser) => (prevUser ? { ...prevUser, accessToken: newAccessToken } : null));
+      setUser((prevUser) => prevUser ? { ...prevUser, accessToken: newAccessToken } : null);
 
       localStorage.setItem("user", JSON.stringify({ ...user, accessToken: newAccessToken }));
 
@@ -95,6 +104,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await apiClient.post("/auth/register", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
       console.log("✅ Registration successful:", response.data);
       window.location.href = "/login"; // 🔄 Redirect to login after success
     } catch (error) {
@@ -104,6 +114,43 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // ✏ **Update Profile Function**
+  const updateProfile = async (data: Partial<User & { profilePicture?: File }> | FormData) => {
+    if (!user) return;
+
+    try {
+        const headers: Record<string, string> = {
+            Authorization: `JWT ${user.accessToken}`,
+        };
+
+        // 🔹 Only add JSON headers if NOT FormData
+        if (!(data instanceof FormData)) {
+            headers["Content-Type"] = "application/json";
+        }
+
+        const res = await apiClient.put(
+            `/auth/update-profile/${user._id}`,
+            data,
+            { headers }
+        );
+
+        const updatedUser = res.data;
+
+        // ✅ Ensure profile picture URL is absolute
+        if (updatedUser.profilePicture && !updatedUser.profilePicture.startsWith("http")) {
+            updatedUser.profilePicture = `${API_BASE_URL}${updatedUser.profilePicture}`;
+        }
+
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+
+        console.log("✅ Profile updated:", updatedUser);
+    } catch (error) {
+        console.error("❌ Failed to update profile:", error);
+        throw error;
+    }
+};
+
   // 🔴 **Logout Function**
   const logout = () => {
     localStorage.removeItem("user");
@@ -112,7 +159,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, refreshAccessToken }}>
+    <AuthContext.Provider value={{ user, setUser, login, register, logout, refreshAccessToken, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
