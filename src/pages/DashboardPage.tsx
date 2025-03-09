@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import usePosts from "../hooks/usePosts"; // ✅ Use custom hook
@@ -15,25 +15,36 @@ const Dashboard = () => {
   const [content, setContent] = useState("");
   const navigate = useNavigate();
 
-  if (!user) {
-    navigate("/login");
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
+  // ✅ Ensure profile picture is correctly formatted
+  const profilePictureUrl = user?.profilePicture?.startsWith("http")
+  ? user.profilePicture
+  : `http://localhost:4040/uploads/${user?.profilePicture}`;
+
+  console.log("🔍 Profile Picture URL:", profilePictureUrl); // Debugging
+
+  // ✅ Create a new post
   const createPost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !content) {
       alert("❌ Title and content are required.");
       return;
     }
-  
-    if (!user) {  // ✅ Ensure user is logged in before making the request
+
+    if (!user) { // ✅ Ensure user is logged in
       console.error("❌ Error: User is not logged in");
       alert("You must be logged in to create a post.");
       return;
     }
-  
+
     try {
-      const res = await apiClient.post("/posts",
+      const res = await apiClient.post(
+        "/posts",
         { title, content, sender: user._id }, // ✅ Send user ID
         { headers: { Authorization: `JWT ${user.accessToken}` } }
       );
@@ -43,15 +54,51 @@ const Dashboard = () => {
     } catch (error) {
       console.error("❌ Error creating post:", error);
     }
-  };  
+  };
+
+  // ✅ Delete a post
+  const deletePost = async (postId: string) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    try {
+      await apiClient.delete(`/posts/${postId}`, {
+        headers: { Authorization: `JWT ${user?.accessToken}` },
+      });
+      setPosts(posts.filter((post) => post._id !== postId));
+    } catch (error) {
+      console.error("❌ Error deleting post:", error);
+    }
+  };
+
+  // ✅ Fix Edit Post (500 Error)
+  const editPost = async (postId: string) => {
+    const newTitle = prompt("Enter new title:");
+    const newContent = prompt("Enter new content:");
+    if (!newTitle || !newContent) return;
+
+    try {
+      const res = await apiClient.put(
+        `/posts/${postId}`,
+        { title: newTitle, content: newContent, sender: user?._id }, // ✅ Ensure sender is included
+        { headers: { Authorization: `JWT ${user?.accessToken}` } }
+      );
+      setPosts(posts.map((post) => (post._id === postId ? res.data : post)));
+    } catch (error) {
+      console.error("❌ Error updating post:", error);
+    }
+  };
 
   return (
     <div className="dashboard-container">
+      {/* ✅ User Profile Info */}
       <div className="dashboard-header">
-        <h2>Dashboard</h2>
+        <div className="profile-info">
+          <h3>Welcome, {user?.username}!</h3>
+        </div>
         <button onClick={logout} className="btn btn-danger">Logout</button>
       </div>
 
+      {/* ✅ Create Post */}
       <div className="create-post-card">
         <h3>Create a New Post</h3>
         <form onSubmit={createPost}>
@@ -72,6 +119,7 @@ const Dashboard = () => {
         </form>
       </div>
 
+      {/* ✅ Display Posts */}
       <h3 className="mt-4">Your Posts</h3>
       {isLoading ? (
         <p>Loading...</p>
@@ -83,6 +131,11 @@ const Dashboard = () => {
             <div key={post._id} className="post-card">
               <h5>{post.title}</h5>
               <p>{post.content}</p>
+              {/* ✅ Action Buttons */}
+              <div className="post-actions">
+                <button className="btn btn-warning btn-sm" onClick={() => editPost(post._id)}>✏ Edit</button>
+                <button className="btn btn-danger btn-sm" onClick={() => deletePost(post._id)}>🗑 Delete</button>
+              </div>
             </div>
           ))
         ) : (

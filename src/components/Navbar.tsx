@@ -1,10 +1,9 @@
-import { useContext } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import "../styles/navbar.css";
 
 const Navbar = () => {
-  const { user, logout } = useContext(AuthContext)!;
+  const { user } = useAuth();
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -22,9 +21,6 @@ const Navbar = () => {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/profile">Profile</Link>
-                </li>
-                <li className="nav-item">
-                  <button className="btn btn-outline-light ms-3" onClick={logout}>Logout</button>
                 </li>
               </>
             ) : (
