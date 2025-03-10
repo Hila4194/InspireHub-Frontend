@@ -1,16 +1,23 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import usePosts from "../hooks/usePosts";
-import { createPost } from "../services/post-service";
+import { createPost, fetchUserPosts } from "../services/post-service"; // ✅ Added fetchUserPosts
 import "../styles/dashboard.css";
+import apiClient from "../services/api-client";
 
 const Dashboard = () => {
     const authContext = useContext(AuthContext);
     if (!authContext) throw new Error("AuthContext is null");
 
     const { user, logout } = authContext;
-    const { posts, setPosts } = usePosts();
+    interface Post {
+        _id: string;
+        title: string;
+        content?: string;
+        imageUrl?: string;
+    }
+    
+    const [userPosts, setUserPosts] = useState<Post[]>([]); // ✅ Holds user's posts
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [postType, setPostType] = useState<"text" | "image">("text");
@@ -19,9 +26,12 @@ const Dashboard = () => {
     const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
     const navigate = useNavigate();
 
+    // ✅ Fetch all user posts on page load
     useEffect(() => {
         if (!user) {
             navigate("/login");
+        } else {
+            fetchUserPosts(user._id).then((posts) => setUserPosts(posts)); // ✅ Load all user posts from DB
         }
     }, [user, navigate]);
 
@@ -48,7 +58,7 @@ const Dashboard = () => {
 
         try {
             const newPost = await createPost({ title, content, image: image || undefined, token: user.accessToken });
-            setPosts([newPost, ...posts]);
+            setUserPosts([newPost, ...userPosts]); // ✅ Add new post to the existing list
             setTitle("");
             setContent("");
             setImage(null);
@@ -66,7 +76,7 @@ const Dashboard = () => {
                     {user?.profilePicture && <img src={user.profilePicture} alt="Profile" className="profile-img" />}
                     <h3>Welcome, {user?.username || "Guest"}!</h3>
                     <p className="dashboard-title">My Dashboard</p>
-                    </div>
+                </div>
                 <button onClick={logout} className="btn btn-danger">Logout</button>
             </div>
 
@@ -102,6 +112,26 @@ const Dashboard = () => {
 
                     <button type="submit" className="btn btn-success w-100">Create Post</button>
                 </form>
+            </div>
+
+            {/* ✅ User's Posts Section */}
+            <div className="user-posts-section">
+                <h3>Your Posts:</h3>
+                {userPosts && userPosts.length > 0 ? (
+    userPosts.map((post) => (
+        <div key={post._id} className="post-card">
+            <h4>{post.title}</h4>
+            {post.imageUrl ? (
+                <img src={post.imageUrl.startsWith("http") ? post.imageUrl : `${apiClient.defaults.baseURL}${post.imageUrl}`} 
+                     alt="Post" className="post-image" />
+            ) : (
+                <p>{post.content}</p>
+            )}
+                </div>
+                ))
+                ) : (
+                    <p>You have not created any posts yet.</p>
+                )}
             </div>
         </div>
     );

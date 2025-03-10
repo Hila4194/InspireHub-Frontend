@@ -1,0 +1,82 @@
+/* ✅ Center the main feed */
+.main-feed-container {
+    max-width: 1000px; /* ✅ Keeps content centered */
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  /* ✅ Title Styling */
+  .main-feed-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  /* ✅ Grid layout for posts */
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* ✅ Increased fixed post size */
+    gap: 25px;
+  }
+  
+  /* ✅ Post Card Styling */
+  .post-card {
+    background-color: #fff;
+    padding: 25px; /* ✅ More padding for better spacing */
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    max-width: 600px; /* ✅ Fixed size for uniform appearance */
+    margin: auto;
+    border: 2px solid #1a1a1a; /* ✅ Black army-style border */
+  }
+  
+  .post-card:hover {
+    transform: scale(1.03);
+  }
+  
+  /* ✅ Post Title */
+  .post-title {
+    font-size: 24px; /* ✅ Larger title */
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+  
+  /* ✅ Post Owner */
+  .post-owner {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  
+  /* ✅ Post Image */
+  .post-image {
+    width: 100%;
+    max-height: 400px; /* ✅ Bigger image size */
+    object-fit: cover;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+  
+  /* ✅ Post Text Content */
+  .post-content {
+    font-size: 20px; /* ✅ Larger font size */
+    color: #222;
+    margin-top: 12px;
+    text-align: left;
+    font-weight: 500;
+  }
+  
+  /* ✅ Responsive Adjustments */
+  @media (max-width: 768px) {
+    .post-grid {
+      grid-template-columns: 1fr; /* ✅ Full width for small screens */
+    }
+  
+    .post-card {
+      max-width: 90%; /* ✅ Adjust for smaller screens */
+    }
+  }  

@@ -5,6 +5,7 @@ import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Homepage from "./pages/HomePage";
+import MainFeedPage from "./pages/MainFeedPage";
 
 const App = () => {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/dashboard" />} />
         <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/dashboard" />} />
         <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
+        <Route path="/feed" element={<MainFeedPage />} />
       </Routes>
   );
 };
