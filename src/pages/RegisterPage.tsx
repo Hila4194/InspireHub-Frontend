@@ -5,6 +5,16 @@ import apiClient from "../services/api-client";
 import axios from "axios";
 import "../styles/register.css";
 import defaultAvatar from "../assets/default-avatar.png";
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+// ✅ User Interface
+interface User {
+  _id: string;
+  username: string;
+  email: string;
+  profilePicture: string;
+  accessToken: string;
+  refreshToken: string;
+}
 
 // Zod Schema for Validation
 const registerSchema = z.object({
@@ -95,6 +105,41 @@ const RegisterPage = () => {
     }    
   };
 
+  const googleSignin = (credentialResponse: CredentialResponse) => {
+    return new Promise<User>((resolve, reject) => {
+      console.log("Google Signin!");
+      axios
+        .post("http://localhost:4040/auth/google", credentialResponse)
+        .then((res) => {
+          console.log("userID", res.data._id);
+          console.log("Google Signin success!");
+
+          resolve(res.data);
+        })
+        .catch((error) => {
+          console.log("Google Signin error!");
+          reject(error);
+        });
+    });
+  };
+  
+  const onGoogleLoginSuccess = async (
+    credentialResponse: CredentialResponse
+  ) => {
+    console.log("✅ Google login successful!", credentialResponse);
+    try {
+      const res = await googleSignin(credentialResponse);
+      localStorage.setItem("user", JSON.stringify(res._id));
+      console.log("Google Signin success!", res);
+      navigate("/home");
+    } catch (error) {
+      console.log("Google Signin error!", error);
+    }
+  };
+  const onGoogleLoginError = () => {
+    console.error("🛑 Google login failed!");
+  };
+  
   return (
     <div className="register-container">
       <div className="register-card">
@@ -167,6 +212,23 @@ const RegisterPage = () => {
         <p className="mt-3">
           Already have an account? <Link to="/login">Login here</Link>
         </p>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center", // Centers horizontally
+            alignItems: "center", // Centers vertically
+            marginTop: "10px", // Adds spacing below the divider
+          }}
+        >
+          <GoogleLogin
+            onSuccess={onGoogleLoginSuccess}
+            onError={onGoogleLoginError}
+            theme="outline"
+            size="large" // ✅ Makes the button bigger
+            width="400"
+          />
+        </div>
       </div>
     </div>
   );
