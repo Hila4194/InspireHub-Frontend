@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import apiClient from "../services/api-client"; // ✅ Import API client
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google"; // ✅ Import Google Sign-in
 import "../styles/login.css";
 
 const LoginPage = () => {
@@ -8,30 +10,72 @@ const LoginPage = () => {
     if (!authContext) {
         throw new Error("AuthContext is null");
     }
-    const { login } = authContext;
+    const { login, setUser } = authContext; // ✅ Get setUser from AuthContext
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
+    // ✅ Handle Standard Login
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
-    
+
         if (!username || !password) {
             setError("Please enter your username and password.");
             return;
         }
-    
+
         try {
-            await login(username, password); // ✅ Pass username and password instead of response.data
+            await login(username, password); // ✅ Pass username and password
             navigate("/dashboard");
         } catch (error) {
             setError("Invalid username or password. Please try again.");
             console.error("❌ Login Error:", error);
         }
-    };    
+    };
+
+    // ✅ Google Sign-in API Call
+    const googleSignin = async (credentialResponse: CredentialResponse) => {
+        try {
+            console.log("Google Signin!", credentialResponse);
+
+            const { credential } = credentialResponse;
+            if (!credential) {
+                throw new Error("Google credential is missing");
+            }
+
+            const response = await apiClient.post("/auth/google", { credential });
+
+            console.log("✅ Google Signin success!", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("❌ Google Signin error!", error);
+            throw error;
+        }
+    };
+
+    // ✅ Google Sign-in Success Handler
+    const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+        console.log("✅ Google login successful!", credentialResponse);
+        try {
+            const res = await googleSignin(credentialResponse);
+
+            // ✅ Store the full user object
+            localStorage.setItem("user", JSON.stringify(res));
+            setUser(res); // ✅ Update AuthContext
+
+            console.log("Google Signin success!", res);
+            navigate("/dashboard"); // ✅ Redirect to the dashboard
+        } catch (error) {
+            console.log("Google Signin error!", error);
+        }
+    };
+
+    const onGoogleLoginError = () => {
+        console.error("🛑 Google login failed!");
+    };
 
     return (
         <div className="login-container">
@@ -63,12 +107,18 @@ const LoginPage = () => {
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Login</button>
                 </form>
+
                 <div className="text-center mt-3">
                     <p>Don't have an account? <a href="/register">Register here</a></p>
                 </div>
+
+                {/* ✅ Google Login Button */}
+                <div className="text-center mt-3">
+                    <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginError} theme="outline" size="large" />
+                </div>
             </div>
         </div>
-    );    
+    );
 };
 
 export default LoginPage;
