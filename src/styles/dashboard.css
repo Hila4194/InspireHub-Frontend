@@ -1,27 +1,131 @@
+/* ✅ Center the Dashboard */
 .dashboard-container {
-    max-width: 900px;
-    margin: auto;
-    padding: 20px;
+  max-width: 800px; /* ✅ Keeps content centered */
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ✅ Centering the Notification Messages */
+.notification {
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  border-radius: 5px;
+  font-weight: bold;
+  max-width: 400px; /* ✅ Prevents it from being too wide */
+  margin: 15px auto; /* ✅ Centers horizontally */
+}
+
+/* ✅ Success Notification */
+.notification.success {
+  color: rgb(7, 151, 93);
+}
+
+/* ✅ Error Notification */
+.notification.error {
+  color: rgb(167, 9, 9);
+}
+
+/* ✅ Keep Header Layout Consistent */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+/* ✅ Center and Style the Dashboard Title */
+.dashboard-title {
+  text-align: center;
+  font-size: 26px; /* ✅ Matches "Create a New Post" */
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* ✅ Reduce Welcome Message Size */
+.welcome-message {
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* ✅ Post Creation Styling */
+.create-post-card {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  text-align: center;
+  max-width: 600px; /* ✅ Prevents stretching */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ✅ Side-by-Side Post Type Toggle */
+.post-type-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 8px; /* ✅ Reduced space for better alignment */
+  margin-bottom: 10px;
+}
+
+.post-type-toggle button {
+  background-color: #ddd;
+  border: none;
+  padding: 8px 12px; /* ✅ Reduced padding for better fit */
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+  min-width: 80px; /* ✅ Keeps buttons uniform */
+}
+
+.post-type-toggle button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* ✅ Responsive Adjustments */
+@media (max-width: 768px) {
+  .dashboard-container {
+      width: 90%;
   }
-  
-  .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+
+  .post-type-toggle {
+      flex-direction: row;
+      justify-content: center;
   }
-  
-  .create-post-card {
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
+
   .post-card {
-    padding: 15px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }  
+      max-width: 100%;
+  }
+}
+
+/* ✅ Improved Image Preview Styling */
+.preview-image {
+  width: 100%; /* ✅ Ensures the image fits within the card */
+  max-height: 300px; /* ✅ Prevents overly tall images */
+  object-fit: contain; /* ✅ Ensures entire image is visible */
+  border-radius: 10px;
+  margin-top: 10px;
+  display: block;
+}
+
+/* ✅ Adjusts Specifically for Portrait Images */
+@media (min-aspect-ratio: 3/4) { /* ✅ For landscape images */
+  .preview-image {
+      width: 100%;
+      height: auto;
+  }
+}
+
+@media (max-aspect-ratio: 3/4) { /* ✅ For portrait images */
+  .preview-image {
+      width: auto;
+      height: 300px; /* ✅ Adjusts to fit the card */
+  }
+}
