@@ -22,6 +22,9 @@ const Navbar = () => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/profile">Profile</Link>
                 </li>
+                <li>
+                <Link className="nav-link" to="/feed">Main feed</Link>
+                </li>
               </>
             ) : (
               <>

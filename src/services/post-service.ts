@@ -44,3 +44,13 @@ export const createPost = async (postData: PostData) => {
         throw error;
     }
 };
+
+export const fetchUserPosts = async (userId: string) => {
+    try {
+      const response = await apiClient.get(`/posts/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Error fetching user posts:", error);
+      return [];
+    }
+  };  
