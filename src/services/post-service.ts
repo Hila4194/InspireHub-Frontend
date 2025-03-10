@@ -1,18 +1,46 @@
-import apiClient, { CanceledError } from "./api-client"
+import apiClient from "./api-client";
 
-export { CanceledError }
-
-export interface Post {
-    _id: string,
-    title: string,
-    content: string,
-    sender: string
+export interface PostData {
+    title: string;
+    content?: string;
+    image?: File;
+    token: string;
 }
 
-const getAllPosts = () => {
-    const abortController = new AbortController()
-    const request = apiClient.get<Post[]>("/api/posts", { signal: abortController.signal })
-    return { request, abort: () => abortController.abort() }
-}
+export const createPost = async (postData: PostData) => {
+    try {
+        let imageUrl = "";
 
-export default { getAllPosts }
+        // ✅ Upload Image First (if applicable)
+        if (postData.image) {
+            const formData = new FormData();
+            formData.append("file", postData.image);
+
+            const uploadResponse = await apiClient.post("/uploads/post-image", formData, {
+                headers: { 
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${postData.token}`,
+                },
+            });
+
+            imageUrl = `/uploads/${uploadResponse.data.url.split("/").pop()}`; // ✅ Ensured correct storage path
+        }
+
+        // ✅ Send Post Data with Image URL
+        const response = await apiClient.post("/posts", {
+            title: postData.title,
+            content: postData.content || "",
+            imageUrl,
+        }, {
+            headers: { 
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${postData.token}`,
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("❌ Error creating post:", error);
+        throw error;
+    }
+};
