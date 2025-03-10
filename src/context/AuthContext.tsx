@@ -115,26 +115,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // ✏ **Update Profile Function**
-  const updateProfile = async (data: Partial<User & { profilePicture?: File }> | FormData) => {
+  const updateProfile = async (updatedData: Partial<User> | FormData): Promise<void> => {
     if (!user) return;
 
     try {
+        const isFormData = updatedData instanceof FormData;
+
         const headers: Record<string, string> = {
             Authorization: `JWT ${user.accessToken}`,
         };
 
-        // 🔹 Only add JSON headers if NOT FormData
-        if (!(data instanceof FormData)) {
+        // ✅ Only add Content-Type for JSON requests, not FormData
+        if (!isFormData) {
             headers["Content-Type"] = "application/json";
         }
 
         const res = await apiClient.put(
             `/auth/update-profile/${user._id}`,
-            data,
+            updatedData,
             { headers }
         );
 
-        const updatedUser = res.data;
+        const updatedUser: User = res.data;
 
         // ✅ Ensure profile picture URL is absolute
         if (updatedUser.profilePicture && !updatedUser.profilePicture.startsWith("http")) {
@@ -144,7 +146,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
 
-        console.log("✅ Profile updated:", updatedUser);
+        console.log("✅ Profile updated successfully:", updatedUser);
     } catch (error) {
         console.error("❌ Failed to update profile:", error);
         throw error;

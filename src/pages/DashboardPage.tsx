@@ -96,7 +96,8 @@ const Dashboard = () => {
           {user?.profilePicture && (
             <img src={user.profilePicture} alt="Profile" className="profile-img" />
           )}
-          <h3>Welcome, {user?.username}!</h3>
+          <h3>Welcome, {user?.username || "Guest"}!</h3>
+          <p>Your Dashboard</p>
         </div>
         <button onClick={logout} className="btn btn-danger">Logout</button>
       </div>
