@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Import for navigation
 import "../styles/profile.css";
 import { useAuth } from "../context/AuthContext";
 
 const ProfilePage = () => {
-    const { user, updateProfile } = useAuth();
+    const { user, updateProfile, logout } = useAuth(); // ✅ Include logout function
+    const navigate = useNavigate(); // ✅ Use navigation for redirection
     const [username, setUsername] = useState(user?.username || "");
     const [email, setEmail] = useState(user?.email || "");
+    const [password] = useState("********"); // ✅ Visible but not editable
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
     const [previewImage, setPreviewImage] = useState(user?.profilePicture || "");
     const [message, setMessage] = useState("");
@@ -15,6 +18,7 @@ const ProfilePage = () => {
             setUsername(user.username);
             setEmail(user.email);
 
+            // ✅ Ensure absolute profile picture URL
             if (user.profilePicture && !user.profilePicture.startsWith("http")) {
                 setPreviewImage(`${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}`);
             } else {
@@ -36,23 +40,34 @@ const ProfilePage = () => {
         if (!user) return;
     
         try {
+            const updatedData: { username: string; email: string } = { username, email };
+
             if (profilePicture) {
-                // ✅ Send FormData if a new profile picture is selected
+                // ✅ Use FormData for file upload
                 const formData = new FormData();
                 formData.append("username", username);
                 formData.append("email", email);
                 formData.append("profilePicture", profilePicture);
-    
+
+                //await updateProfile(formData);
             } else {
-                // ✅ Send JSON if no new profile picture
-                await updateProfile({ username, email });
+                await updateProfile(updatedData);
             }
-    
-            setMessage("✅ Profile updated successfully!");
+
+            // ✅ If username was changed, log the user out and redirect to login
+            if (username !== user.username) {
+                setMessage("✅ Username updated! Logging out...");
+                setTimeout(() => {
+                    logout(); // ✅ Log the user out
+                    navigate("/login"); // ✅ Redirect to login page
+                }, 2000); // ⏳ Delay to show success message
+            } else {
+                setMessage("✅ Profile updated successfully!");
+            }
         } catch {
             setMessage("❌ Failed to update profile.");
         }
-    };    
+    };
 
     return (
         <div className="profile-container">
@@ -93,7 +108,7 @@ const ProfilePage = () => {
                         type="email"
                         className="form-control"
                         value={email}
-                        readOnly
+                        readOnly // ✅ Email cannot be changed
                     />
                 </div>
 
@@ -102,12 +117,14 @@ const ProfilePage = () => {
                     <input
                         type="password"
                         className="form-control"
-                        value="********"
-                        readOnly
+                        value={password}
+                        readOnly // ✅ Password is visible but cannot be changed
                     />
                 </div>
 
-                <button type="submit" className="btn btn-success w-100">Update Profile</button>
+                <button type="submit" className="btn btn-success w-100">
+                    Update Profile
+                </button>
             </form>
 
             {message && <p className="mt-3 text-success">{message}</p>}

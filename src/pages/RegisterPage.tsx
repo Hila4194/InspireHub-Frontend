@@ -1,45 +1,45 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { useAuth } from "../context/AuthContext"; // ✅ Import AuthContext
 import apiClient from "../services/api-client";
 import axios from "axios";
 import "../styles/register.css";
 import defaultAvatar from "../assets/default-avatar.png";
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-// ✅ User Interface
-interface User {
-  _id: string;
-  username: string;
-  email: string;
-  profilePicture: string;
-  accessToken: string;
-  refreshToken: string;
-}
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 
 // Zod Schema for Validation
 const registerSchema = z.object({
-  username: z.string()
+  username: z
+    .string()
     .min(3, { message: "Username must be at least 3 characters long" })
-    .regex(/^(?=.*[a-zA-Z])(?=.*\d).+$/, { message: "Username must contain both letters and numbers" }),
+    .regex(/^(?=.*[a-zA-Z])(?=.*\d).+$/, {
+      message: "Username must contain both letters and numbers",
+    }),
 
-  email: z.string()
-    .email({ message: "Invalid email format" }),
+  email: z.string().email({ message: "Invalid email format" }),
 
-  password: z.string()
+  password: z
+    .string()
     .min(6, { message: "Password must be at least 6 characters long" }),
 });
 
 const RegisterPage = () => {
+  const { setUser } = useAuth(); // ✅ Get setUser from AuthContext
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string>(defaultAvatar);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(""); // ✅ Now used in JSX
   const navigate = useNavigate();
 
   // Validation state
-  const [errors, setErrors] = useState<{ username?: string; email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{
+    username?: string;
+    email?: string;
+    password?: string;
+  }>({});
 
   // Handle File Selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +54,11 @@ const RegisterPage = () => {
   const validateInputs = () => {
     const result = registerSchema.safeParse({ username, email, password });
     if (!result.success) {
-      const newErrors: { username?: string; email?: string; password?: string } = {};
+      const newErrors: {
+        username?: string;
+        email?: string;
+        password?: string;
+      } = {};
       result.error.errors.forEach((err) => {
         if (err.path[0] === "username") newErrors.username = err.message;
         if (err.path[0] === "email") newErrors.email = err.message;
@@ -102,57 +106,70 @@ const RegisterPage = () => {
         console.error("❌ Unexpected Error:", error);
         setMessage("An unexpected error occurred");
       }
-    }    
+    }
   };
 
-  const googleSignin = (credentialResponse: CredentialResponse) => {
-    return new Promise<User>((resolve, reject) => {
-      console.log("Google Signin!");
-      axios
-        .post("http://localhost:4040/auth/google", credentialResponse)
-        .then((res) => {
-          console.log("userID", res.data._id);
-          console.log("Google Signin success!");
+  // ✅ Google Sign-in API Call
+  const googleSignin = async (credentialResponse: CredentialResponse) => {
+    try {
+      console.log("Google Signin!", credentialResponse);
 
-          resolve(res.data);
-        })
-        .catch((error) => {
-          console.log("Google Signin error!");
-          reject(error);
-        });
-    });
-  };
-  
-  const onGoogleLoginSuccess = async (
-    credentialResponse: CredentialResponse
-  ) => {
+      const { credential } = credentialResponse;
+      if (!credential) {
+        throw new Error("Google credential is missing");
+      }
+
+      const response = await apiClient.post("/auth/google", { credential }); // ✅ Only sending { credential }
+
+      console.log("✅ Google Signin success!", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Google Signin error!", error);
+      throw error;
+    }
+  };
+
+  // ✅ Google Sign-in Success Handler
+  const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
     console.log("✅ Google login successful!", credentialResponse);
     try {
       const res = await googleSignin(credentialResponse);
-      localStorage.setItem("user", JSON.stringify(res._id));
+
+      // ✅ Store the full user object, not just the ID
+      localStorage.setItem("user", JSON.stringify(res));
+      setUser(res); // ✅ Update AuthContext
+
       console.log("Google Signin success!", res);
-      navigate("/home");
+      navigate("/dashboard"); // ✅ Redirect to the dashboard
     } catch (error) {
       console.log("Google Signin error!", error);
     }
   };
+
   const onGoogleLoginError = () => {
     console.error("🛑 Google login failed!");
   };
-  
+
   return (
     <div className="register-container">
       <div className="register-card">
         <h2>Register</h2>
-        
+
         {/* Profile Picture Preview */}
         <div className="profile-picture-container">
-          <img src={previewImage} alt="Profile Preview" className="profile-picture" />
+          <img
+            src={previewImage}
+            alt="Profile Preview"
+            className="profile-picture"
+          />
         </div>
 
         {/* Custom File Upload Button */}
         <div className="upload-button-container">
-          <label htmlFor="profile-picture" className="btn btn-primary upload-button">
+          <label
+            htmlFor="profile-picture"
+            className="btn btn-primary upload-button"
+          >
             <i className="fas fa-upload"></i> Upload Profile Picture
           </label>
           <input
@@ -175,7 +192,9 @@ const RegisterPage = () => {
               onChange={(e) => setUsername(e.target.value)}
               required
             />
-            {errors.username && <div className="invalid-feedback">{errors.username}</div>}
+            {errors.username && (
+              <div className="invalid-feedback">{errors.username}</div>
+            )}
           </div>
 
           {/* Email */}
@@ -188,7 +207,9 @@ const RegisterPage = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+            {errors.email && (
+              <div className="invalid-feedback">{errors.email}</div>
+            )}
           </div>
 
           {/* Password */}
@@ -201,34 +222,21 @@ const RegisterPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+            {errors.password && (
+              <div className="invalid-feedback">{errors.password}</div>
+            )}
           </div>
 
-          <button type="submit" className="btn btn-primary w-100">Register</button>
+          <button type="submit" className="btn btn-primary w-100">
+            Register
+          </button>
         </form>
-        
+
+        {/* ✅ Show messages */}
         {message && <p className={`mt-3 ${message.startsWith("✅") ? "text-success" : "text-danger"}`}>{message}</p>}
-        
-        <p className="mt-3">
-          Already have an account? <Link to="/login">Login here</Link>
-        </p>
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center", // Centers horizontally
-            alignItems: "center", // Centers vertically
-            marginTop: "10px", // Adds spacing below the divider
-          }}
-        >
-          <GoogleLogin
-            onSuccess={onGoogleLoginSuccess}
-            onError={onGoogleLoginError}
-            theme="outline"
-            size="large" // ✅ Makes the button bigger
-            width="400"
-          />
-        </div>
+
+        <p className="mt-3">Already have an account? <Link to="/login">Login here</Link></p>
+        <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginError} theme="outline" size="large" />
       </div>
     </div>
   );
