@@ -4,12 +4,13 @@ import DashboardPage from "./pages/DashboardPage";
 import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import Homepage from "./pages/HomePage";
 
 const App = () => {
   const { user } = useAuth();
-
   return (
       <Routes>
+        <Route path="/" element={!user ? <Homepage /> : <Navigate to="/dashboard" />} />
         <Route path="/dashboard" element={user ? <DashboardPage /> : <Navigate to="/login" />} />
         <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/dashboard" />} />
