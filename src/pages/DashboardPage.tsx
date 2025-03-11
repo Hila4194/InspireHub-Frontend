@@ -73,8 +73,14 @@ const Dashboard = () => {
         <div className="dashboard-container">
             <div className="dashboard-header">
                 <div className="profile-info">
-                    {user?.profilePicture && <img src={user.profilePicture} alt="Profile" className="profile-img" />}
-                    <h3>Welcome, {user?.username || "Guest"}!</h3>
+                {user?.profilePicture && (
+                <img 
+                src={user.profilePicture.startsWith("http") ? user.profilePicture : `${apiClient}${user.profilePicture}`} 
+                alt="Profile" 
+                className="profile-img"
+                />
+                )}
+                <h3>Welcome, {user?.username || "Guest"}!</h3>
                     <p className="dashboard-title">My Dashboard</p>
                 </div>
                 <button onClick={logout} className="btn btn-danger">Logout</button>
@@ -122,8 +128,10 @@ const Dashboard = () => {
         <div key={post._id} className="post-card">
             <h4>{post.title}</h4>
             {post.imageUrl ? (
-                <img src={post.imageUrl.startsWith("http") ? post.imageUrl : `${apiClient.defaults.baseURL}${post.imageUrl}`} 
-                     alt="Post" className="post-image" />
+                <img 
+                src={post.imageUrl.startsWith("http") ? post.imageUrl : `${apiClient}${post.imageUrl}`} 
+                alt="Post" className="post-image" 
+            />            
             ) : (
                 <p>{post.content}</p>
             )}
