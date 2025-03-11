@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // ✅ Import for navigation
 import "../styles/profile.css";
 import { useAuth } from "../context/AuthContext";
+import apiClient from "../services/api-client";
 
 const ProfilePage = () => {
     const { user, updateProfile, logout } = useAuth(); // ✅ Include logout function
@@ -20,7 +21,7 @@ const ProfilePage = () => {
 
             // ✅ Ensure absolute profile picture URL
             if (user.profilePicture && !user.profilePicture.startsWith("http")) {
-                setPreviewImage(`${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}`);
+                setPreviewImage(user.profilePicture.startsWith("http") ? user.profilePicture : `${apiClient}${user.profilePicture}`);
             } else {
                 setPreviewImage(user.profilePicture);
             }

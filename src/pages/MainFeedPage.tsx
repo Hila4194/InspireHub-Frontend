@@ -44,11 +44,10 @@ const MainFeedPage = () => {
                 <h3 className="post-title">{post.title}</h3>
                 <p className="post-owner">By: {post.sender?.username || "Unknown"}</p>
                 {post.imageUrl ? (
-                    <img 
-                        src={post.imageUrl ? `${apiClient.defaults.baseURL}${post.imageUrl}` : ""} 
-                        alt={post.title} 
-                        className="post-image"
-                    />
+                  <img 
+                  src={post.imageUrl.startsWith("http") ? post.imageUrl : `${apiClient}${post.imageUrl}`} 
+                  alt="Post" className="post-image" 
+              />            
                 ) : (
                  <p className="post-content">{post.content}</p>
                 )}
