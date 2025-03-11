@@ -53,4 +53,30 @@ export const fetchUserPosts = async (userId: string) => {
       console.error("❌ Error fetching user posts:", error);
       return [];
     }
-  };  
+  };
+
+  export const updatePost = async (postId: string, updatedData: FormData | Partial<PostData>) => {
+    try {
+        const headers = updatedData instanceof FormData 
+            ? { "Content-Type": "multipart/form-data" } 
+            : { "Content-Type": "application/json" };
+
+        console.log("📌 Sending Update Request:", updatedData);
+
+        const response = await apiClient.put(`/posts/${postId}`, updatedData, { headers });
+        return response.data;
+    } catch (error) {
+        console.error("❌ Error updating post:", error);
+        throw error;
+    }
+};
+
+export const deletePost = async (postId: string) => {
+    try {
+        const response = await apiClient.delete(`/posts/${postId}`);
+        return response.data;
+    } catch (error) {
+        console.error("❌ Error deleting post:", error);
+        throw error;
+    }
+};
