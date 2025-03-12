@@ -79,4 +79,26 @@
     .post-card {
       max-width: 90%; /* ✅ Adjust for smaller screens */
     }
-  }  
+  }
+  /* ✅ Quote Box Styling */
+.quote-box {
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-left: 5px solid #007bff;
+  margin-bottom: 20px;
+  text-align: center;
+  font-style: italic;
+  border-radius: 8px;
+}
+
+.quote-text {
+  font-size: 18px;
+  color: #333;
+}
+
+.quote-author {
+  font-size: 16px;
+  font-weight: bold;
+  color: #007bff;
+  margin-top: 5px;
+}
