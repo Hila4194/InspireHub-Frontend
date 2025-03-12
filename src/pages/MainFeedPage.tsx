@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import apiClient from "../services/api-client";
-import "../styles/mainfeed.css"; // ✅ New CSS file for styling
+import "../styles/mainfeed.css";
+import { fetchMotivationalQuote, Quote } from "../services/quote-service";
+
 
 interface Post {
   _id: string;
@@ -13,25 +15,40 @@ interface Post {
 const MainFeedPage = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [quote, setQuote] = useState<Quote | null>(null);
+  const [quoteFetched, setQuoteFetched] = useState(false); // ✅ Prevent multiple requests
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchContent = async () => {
       try {
-        const response = await apiClient.get("/posts"); // ✅ Fetch all posts
-        setPosts(response.data);
+        const postResponse = await apiClient.get("/posts");
+        setPosts(postResponse.data);
+
+        // ✅ Fetch quote only if it hasn't been fetched already
+        if (!quoteFetched) {
+          const fetchedQuote = await fetchMotivationalQuote();
+          setQuote(fetchedQuote);
+          setQuoteFetched(true); // ✅ Prevent multiple fetches
+        }
       } catch (error) {
-        console.error("❌ Error fetching posts:", error);
+        console.error("❌ Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchPosts();
-  }, []);
+    fetchContent();
+  }, [quoteFetched]);
 
   return (
     <div className="main-feed-container">
       <h2 className="main-feed-title">Main Feed</h2>
-
+      {/* 🔹 Display Motivational Quote */}
+      {quote && (
+        <div className="quote-box">
+          <p className="quote-text">“{quote.q}”</p>
+          <p className="quote-author">- {quote.a}</p>
+        </div>
+      )}
       {loading ? (
         <p className="loading-text">Loading posts...</p>
       ) : (
