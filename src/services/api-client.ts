@@ -5,7 +5,10 @@ export { CanceledError };
 
 // ✅ Set base URL for API requests
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL, 
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 // ✅ Request Interceptor - Attach Authorization Header

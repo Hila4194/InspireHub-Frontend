@@ -18,7 +18,7 @@ const Dashboard = () => {
         content?: string;
         imageUrl?: string;
     }
-
+    const [userInput, setUserInput] = useState("");  
     const [userPosts, setUserPosts] = useState<Post[]>([]);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -30,6 +30,10 @@ const Dashboard = () => {
     const [editedTitle, setEditedTitle] = useState("");
     const [editedContent, setEditedContent] = useState("");
     const [editedImage, setEditedImage] = useState<File | null>(null);
+    const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
+    const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [submitted, setSubmitted] = useState(false); // ✅ Track if button was clicked
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,6 +41,7 @@ const Dashboard = () => {
             navigate("/login");
         } else {
             fetchUserPosts(user._id).then((posts) => setUserPosts(posts));
+            fetchAISuggestions();
         }
     }, [user, navigate]);
 
@@ -107,6 +112,30 @@ const Dashboard = () => {
         }
     };
 
+    // Function to send user input to backend and get AI suggestions
+    const fetchAISuggestions = async () => {
+        setSubmitted(true); // ✅ Mark that the button was clicked
+
+        if (!userInput.trim()) {  
+            setError("❌ Please enter some text before requesting AI suggestions.");
+            return;
+        }
+
+        // ✅ Clear error message on valid input
+        setError(null);
+        setLoadingSuggestions(true);
+
+        try {
+            const response = await apiClient.post("/posts/suggestions", { userInput });
+            setAiSuggestions(response.data.suggestions);
+        } catch (err) {
+            console.error("❌ Error fetching AI suggestions:", err);
+            setError("❌ Failed to get suggestions. Please try again.");
+        } finally {
+            setLoadingSuggestions(false);
+        }
+    };
+
     return (
         <div className="dashboard-container">
             <div className="dashboard-header">
@@ -122,6 +151,42 @@ const Dashboard = () => {
                     <p className="dashboard-title">My Dashboard</p>
                 </div>
                 <button onClick={logout} className="btn btn-danger">Logout</button>
+
+            </div>
+            {/* 🔹 AI-Based Content Suggestions Section */}
+            <div className="ai-suggestions">
+                <h3>🤖 Get AI Post Ideas</h3>
+                <p>Enter a topic or idea below, and AI will suggest post ideas for you.</p>
+
+                <textarea
+                    value={userInput}
+                    onChange={(e) => {
+                        setUserInput(e.target.value);
+                        if (submitted) setError(null); // ✅ Clear error when user starts typing
+                    }}
+                    placeholder="Type your topic or idea here..."
+                    className="form-control"
+                    rows={3}
+                ></textarea>
+
+                <button onClick={fetchAISuggestions} className="btn btn-primary mt-2">
+                    Generate Post Ideas
+                </button>
+
+                {/* ✅ Show error only if the button was clicked and input is empty */}
+                {submitted && error && <p className="error-text">{error}</p>}
+
+                {loadingSuggestions ? (
+                    <p>Loading suggestions...</p>
+                ) : (
+                    aiSuggestions.length > 0 && (
+                        <ul className="suggestions-list">
+                            {aiSuggestions.map((suggestion, index) => (
+                                <li key={index}>✨ {suggestion}</li>
+                            ))}
+                        </ul>
+                    )
+                )}
             </div>
 
             {notification && (
