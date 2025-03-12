@@ -19,6 +19,7 @@ const MainFeedPage = () => {
   const authContext = useContext(AuthContext); // ✅ Get AuthContext
   if (!authContext) throw new Error("AuthContext is null");
   const { user } = authContext; // ✅ Retrieve user from context  
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -27,8 +28,27 @@ const MainFeedPage = () => {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const postResponse = await apiClient.get("/posts");
-        setPosts(postResponse.data);
+        const postResponse = await apiClient.get<Post[]>("/posts");
+        const posts = postResponse.data;
+
+        // ✅ Keep `VITE_API_BASE_URL` for API calls, but remove `/api` for images
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, ""); // Keep `/api` for API calls
+        const imageBaseUrl = apiBaseUrl.replace("/api", ""); // ✅ Remove `/api` for images
+
+        // ✅ Debug: Log raw post image URLs before processing
+        console.log("🔍 Debug: Raw Post Image URLs from Backend:", posts.map(post => post.imageUrl));
+
+        // ✅ Ensure post images are correctly formatted
+        const formattedPosts = posts.map((post: Post) => ({
+          ...post,
+          imageUrl: post.imageUrl?.startsWith("/uploads/")
+            ? `${imageBaseUrl}${post.imageUrl}` // ✅ Use `imageBaseUrl` (without `/api`)
+            : post.imageUrl,
+        }));
+
+        console.log("✅ Debug: Processed Post Image URLs:", formattedPosts.map(post => post.imageUrl));
+
+        setPosts(formattedPosts);
 
         // ✅ Fetch quote only if it hasn't been fetched already
         if (!quoteFetched) {
@@ -42,6 +62,7 @@ const MainFeedPage = () => {
         setLoading(false);
       }
     };
+
     fetchContent();
   }, [quoteFetched]);
 
@@ -101,14 +122,20 @@ const MainFeedPage = () => {
               <div key={post._id} className="post-card">
                 <h3 className="post-title">{post.title}</h3>
                 <p className="post-owner">By: {post.sender?.username || "Unknown"}</p>
-                {post.imageUrl ? (
-                  <img 
-                  src={post.imageUrl.startsWith("http") ? post.imageUrl : `${apiClient}${post.imageUrl}`} 
-                  alt="Post" className="post-image" 
-              />            
-                ) : (
-                 <p className="post-content">{post.content}</p>
-                )}
+                {/* ✅ Fix Post Image Handling */}
+              {post.imageUrl ? (
+                <img
+                  src={post.imageUrl}
+                  alt="Post"
+                  className="post-image"
+                  onError={(e) => {
+                    console.error("❌ Image failed to load:", e.currentTarget.src);
+                    e.currentTarget.style.display = "none"; // ✅ Hide broken images
+                  }}
+                />
+              ) : (
+                <p className="post-content">{post.content}</p>
+              )}
                 <p>❤️ {post.likes} Likes</p> {/* ✅ Display like count */}
                 <button onClick={() => handleLike(post._id)} className="like-button">
                   {post.likedByUser ? "❤️ Unlike" : "🤍 Like"}
