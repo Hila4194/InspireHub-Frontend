@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const parsedUser = JSON.parse(storedUser);
 
       // ✅ Ensure the profile picture URL is absolute
-      if (parsedUser.profilePicture && !parsedUser.profilePicture.startsWith("http")) {
+      if (parsedUser.profilePicture && parsedUser.profilePicture.startsWith("/uploads/")) {
         parsedUser.profilePicture = `${API_BASE_URL}${parsedUser.profilePicture}`;
       }
 
@@ -53,23 +53,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   // 🔵 **Login Function**
-  const login = async (username: string, password: string) => {
-    try {
+const login = async (username: string, password: string) => {
+  try {
       const response = await apiClient.post<User>("/auth/login", { username, password });
       const userData = response.data;
 
+      console.log("✅ Debug: Received User Data:", userData);
+
+      // ✅ Ensure API_BASE_URL is correctly defined
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "");
+
       // ✅ Ensure the profile picture URL is absolute
       if (userData.profilePicture && !userData.profilePicture.startsWith("http")) {
-        userData.profilePicture = `${API_BASE_URL}${userData.profilePicture}`;
+          userData.profilePicture = `${apiBaseUrl}${userData.profilePicture.startsWith("/") ? "" : "/"}${userData.profilePicture}`;
       }
+
+      console.log("✅ Debug: Processed Profile Picture URL:", userData.profilePicture);
 
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
-    } catch (error) {
+  } catch (error) {
       console.error("❌ Login failed:", error);
       throw new Error("Login failed");
-    }
-  };
+  }
+};
 
   // 🔄 **Refresh Token Function**
   const refreshAccessToken = async (): Promise<string | null> => {

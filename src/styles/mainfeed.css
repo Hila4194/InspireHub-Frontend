@@ -115,3 +115,15 @@
 .like-button:hover {
   transform: scale(1.1);
 }
+
+.post-image {
+  max-width: 100%;
+  max-height: 400px;
+  display: block;
+  margin: auto;
+  opacity: 1 !important; /* ✅ Ensure image is visible */
+}
+
+.post-image.loaded {
+  opacity: 1; /* ✅ Show image when loaded */
+}
