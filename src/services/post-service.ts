@@ -80,3 +80,15 @@ export const deletePost = async (postId: string) => {
         throw error;
     }
 };
+
+export const toggleLikePost = async (postId: string, token: string) => {
+    try {
+        const response = await apiClient.put(`/posts/${postId}/like`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data; // ✅ Returns updated like count & user like status
+    } catch (error) {
+        console.error("❌ Error liking post:", error);
+        throw error;
+    }
+};

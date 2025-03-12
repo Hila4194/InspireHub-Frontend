@@ -17,7 +17,17 @@ const Dashboard = () => {
         title: string;
         content?: string;
         imageUrl?: string;
+        likes: number;
     }
+
+    interface Post {
+        _id: string;
+        title: string;
+        content?: string;
+        imageUrl?: string;
+        likes: number; // ✅ Ensure likes is defined as a number
+    }
+
     const [userInput, setUserInput] = useState("");  
     const [userPosts, setUserPosts] = useState<Post[]>([]);
     const [title, setTitle] = useState("");
@@ -40,10 +50,17 @@ const Dashboard = () => {
         if (!user) {
             navigate("/login");
         } else {
-            fetchUserPosts(user._id).then((posts) => setUserPosts(posts));
+            fetchUserPosts(user._id).then((posts) =>
+                setUserPosts(
+                    posts.map((post: Post) => ({
+                        ...post,
+                        likes: post.likes ?? 0, // ✅ Ensure likes is always a number
+                    }))
+                )
+            );
             fetchAISuggestions();
         }
-    }, [user, navigate]);
+    }, [user, navigate]);    
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -227,6 +244,7 @@ const Dashboard = () => {
                                 <>
                                     <h4>{post.title}</h4>
                                     {post.imageUrl ? <img src={`${apiClient}${post.imageUrl}`} alt="Post" className="post-image" /> : <p>{post.content}</p>}
+                                    <p>❤️ {Array.isArray(post.likes) ? post.likes.length : post.likes ?? 0} Likes</p>
                                     <div className="post-actions">
                                         <button onClick={() => handleEditClick(post)}><img src={editIcon} alt="Edit" /></button>
                                         <button onClick={() => handleDeletePost(post._id)}><img src={deleteIcon} alt="Delete" /></button>
