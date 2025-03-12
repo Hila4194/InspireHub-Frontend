@@ -102,3 +102,16 @@
   color: #007bff;
   margin-top: 5px;
 }
+
+.like-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+  transition: 0.2s;
+}
+
+.like-button:hover {
+  transform: scale(1.1);
+}
