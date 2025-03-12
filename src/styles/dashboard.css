@@ -202,3 +202,29 @@
     height: 300px; /* ✅ Adjusts to fit the card */
   }
 }
+
+.ai-suggestions {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.error-text {
+  color: red;
+  font-weight: bold;
+}
+
+.suggestions-list {
+  margin-top: 15px;
+  padding: 0;
+  list-style: none;
+}
+
+.suggestions-list li {
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
