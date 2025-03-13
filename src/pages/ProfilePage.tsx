@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"; // ✅ Import for navigation
 import "../styles/profile.css";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../services/api-client";
+import avatar from "../assets/default-avatar.png";
 
 const ProfilePage = () => {
     const { user, updateProfile, logout } = useAuth(); // ✅ Include logout function
@@ -11,7 +12,7 @@ const ProfilePage = () => {
     const [email, setEmail] = useState(user?.email || "");
     const [password] = useState("********"); // ✅ Visible but not editable
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
-    const [previewImage, setPreviewImage] = useState(user?.profilePicture || "");
+    const [previewImage, setPreviewImage] = useState(user?.profilePicture || avatar);
     const [message, setMessage] = useState("");
 
     useEffect(() => {
@@ -19,11 +20,11 @@ const ProfilePage = () => {
             setUsername(user.username);
             setEmail(user.email);
 
-            // ✅ Ensure absolute profile picture URL
+            // ✅ Ensure absolute profile picture URL or use default avatar
             if (user.profilePicture && !user.profilePicture.startsWith("http")) {
-                setPreviewImage(user.profilePicture.startsWith("http") ? user.profilePicture : `${apiClient}${user.profilePicture}`);
+                setPreviewImage(`${apiClient.defaults.baseURL}${user.profilePicture}`);
             } else {
-                setPreviewImage(user.profilePicture);
+                setPreviewImage(user.profilePicture || avatar);
             }
         }
     }, [user]);
@@ -75,7 +76,15 @@ const ProfilePage = () => {
             <h2>Profile</h2>
 
             <div className="profile-picture-container">
-                {previewImage && <img src={previewImage} alt="Profile" className="profile-picture" />}
+                {/* ✅ Ensure profile picture always displays correctly */}
+                <img
+                    src={previewImage}
+                    alt="Profile"
+                    className="profile-picture"
+                    onError={(e) => {
+                        e.currentTarget.src = avatar; // ✅ Fallback to default avatar
+                    }}
+                />
             </div>
 
             <div className="upload-button-container">

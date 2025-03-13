@@ -1,7 +1,9 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import usePosts from "../hooks/usePosts";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../services/api-client";
+
+const PAGE_SIZE = 4;
 
 const PostsList: FC = () => {
   const { posts, setPosts, isLoading, error } = usePosts();
@@ -9,6 +11,43 @@ const PostsList: FC = () => {
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editedTitle, setEditedTitle] = useState("");
   const [editedContent, setEditedContent] = useState("");
+  const pageRef = useRef(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // ✅ Load More Posts on Scroll
+  const handleScroll = () => {
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100 && hasMore && !loadingMore) {
+      console.log("🔽 Scroll detected, loading more posts...");
+      loadMorePosts();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasMore, loadingMore]);
+
+// ✅ Fetch More Posts with Pagination
+const loadMorePosts = async () => {
+  if (!hasMore || loadingMore) return;
+  setLoadingMore(true);
+
+  try {
+    console.log(`📡 Fetching more posts... (skip=${pageRef.current * PAGE_SIZE})`);
+    const postResponse = await apiClient.get(`/posts?limit=${PAGE_SIZE}&skip=${pageRef.current * PAGE_SIZE}`);
+    const newPosts = postResponse.data;
+
+    if (newPosts.length < PAGE_SIZE) setHasMore(false);
+
+    setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+    pageRef.current += 1;
+  } catch (error) {
+    console.error("❌ Error fetching more posts:", error);
+  } finally {
+    setLoadingMore(false);
+  }
+};
 
   // ✅ DELETE Post
   const deletePost = async (postId: string) => {
@@ -122,6 +161,7 @@ const PostsList: FC = () => {
           </div>
         ))
       )}
+      {loadingMore && <p className="loading-text">Loading more posts...</p>}
     </div>
   );
 };
