@@ -5,7 +5,7 @@ import { AxiosError } from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // ✅ User Interface
-interface User {
+export interface User {
   _id: string;
   username: string;
   email: string;
@@ -22,7 +22,7 @@ interface AuthContextType {
   register: (formData: FormData) => Promise<void>;
   logout: () => void;
   refreshAccessToken: () => Promise<string | null>;
-  updateProfile: (updatedData: Partial<User & { profilePicture?: File }>) => Promise<void>;
+  updateProfile: (updatedData: FormData) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -125,26 +125,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // ✏ **Update Profile Function**
-  const updateProfile = async (updatedData: Partial<User> | FormData): Promise<void> => {
+  const updateProfile = async (updatedData: FormData): Promise<void> => {
     if (!user) return;
 
     try {
-        const isFormData = updatedData instanceof FormData;
-
-        const headers: Record<string, string> = {
-            Authorization: `JWT ${user.accessToken}`,
-        };
-
-        // ✅ Only add Content-Type for JSON requests, not FormData
-        if (!isFormData) {
-            headers["Content-Type"] = "application/json";
-        }
-
-        const res = await apiClient.put(
-            `/auth/update-profile/${user._id}`,
-            updatedData,
-            { headers }
-        );
+        const res = await apiClient.put(`/auth/update-profile/${user._id}`, updatedData, {
+            headers: { Authorization: `JWT ${user.accessToken}` }, // ✅ No need to manually set Content-Type
+        });
 
         const updatedUser: User = res.data;
 
