@@ -11,7 +11,7 @@ const apiClient = axios.create({
   },
 });
 
-// ✅ Request Interceptor - Attach Authorization Header
+// ✅ Request Interceptor - Attach Authorization Header & Handle FormData
 apiClient.interceptors.request.use((config) => {
   const storedUser = localStorage.getItem("user");
   if (storedUser) {
@@ -20,6 +20,12 @@ apiClient.interceptors.request.use((config) => {
       config.headers.Authorization = `JWT ${user.accessToken}`;
     }
   }
+
+  // ✅ Allow FormData to set Content-Type automatically
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"]; // Let the browser set "multipart/form-data"
+  }
+
   return config;
 });
 
