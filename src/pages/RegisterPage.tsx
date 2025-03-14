@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { useAuth } from "../context/AuthContext"; // ✅ Import AuthContext
+import { useAuth } from "../context/AuthContext";
 import apiClient from "../services/api-client";
 import axios from "axios";
 import "../styles/register.css";
 import defaultAvatar from "../assets/default-avatar.png";
+import maleAvatar from "../assets/male-avatar.png";
+import femaleAvatar from "../assets/female-avatar.png";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 
 // Zod Schema for Validation
@@ -25,29 +27,38 @@ const registerSchema = z.object({
 });
 
 const RegisterPage = () => {
-  const { setUser } = useAuth(); // ✅ Get setUser from AuthContext
+  const { setUser } = useAuth();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string>(defaultAvatar);
-  const [message, setMessage] = useState(""); // ✅ Now used in JSX
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(defaultAvatar);
+  const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<{ username?: string; email?: string; password?: string }>({});
   const navigate = useNavigate();
 
-  // Validation state
-  const [errors, setErrors] = useState<{
-    username?: string;
-    email?: string;
-    password?: string;
-  }>({});
+  const previewImage = profilePicture ? URL.createObjectURL(profilePicture) : selectedAvatar;
 
   // Handle File Selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setProfilePicture(file);
-      setPreviewImage(URL.createObjectURL(file)); // Preview the selected image
+      setSelectedAvatar(null); // Clear avatar selection if uploading a custom picture
     }
+  };
+
+  // Handle Avatar Selection
+  const handleAvatarSelect = (avatar: string) => {
+    setSelectedAvatar(avatar);
+    setProfilePicture(null);
+  };
+
+  // Convert avatar URL to File object
+  const getAvatarFile = async (avatarUrl: string): Promise<File> => {
+    const response = await fetch(avatarUrl);
+    const blob = await response.blob();
+    return new File([blob], avatarUrl.includes("male") ? "male-avatar.png" : "female-avatar.png", { type: "image/png" });
   };
 
   // Validate Inputs using Zod
@@ -84,7 +95,13 @@ const RegisterPage = () => {
     formData.append("username", username);
     formData.append("email", email);
     formData.append("password", password);
-    if (profilePicture) formData.append("profilePicture", profilePicture);
+
+    if (profilePicture) {
+      formData.append("profilePicture", profilePicture);
+    } else if (selectedAvatar) {
+      const avatarFile = await getAvatarFile(selectedAvatar);
+      formData.append("profilePicture", avatarFile);
+    }
 
     try {
       const response = await apiClient.post("/auth/register", formData, {
@@ -158,12 +175,18 @@ const RegisterPage = () => {
         {/* Profile Picture Preview */}
         <div className="profile-picture-container">
           <img
-            src={previewImage}
+            src={previewImage || ""}
             alt="Profile Preview"
             className="profile-picture"
           />
         </div>
-
+        <div className="avatar-selection">
+        <h4>Choose an Avatar (Optional)</h4>
+        <div className="avatar-options">
+          <img src={maleAvatar} alt="Male Avatar" className={`avatar-option ${selectedAvatar === maleAvatar ? "selected" : ""}`} onClick={() => handleAvatarSelect(maleAvatar)} />
+          <img src={femaleAvatar} alt="Female Avatar" className={`avatar-option ${selectedAvatar === femaleAvatar ? "selected" : ""}`} onClick={() => handleAvatarSelect(femaleAvatar)} />
+        </div>
+      </div>
         {/* Custom File Upload Button */}
         <div className="upload-button-container">
           <label
@@ -226,7 +249,6 @@ const RegisterPage = () => {
               <div className="invalid-feedback">{errors.password}</div>
             )}
           </div>
-
           <button type="submit" className="btn btn-primary w-100">
             Register
           </button>

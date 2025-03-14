@@ -6,26 +6,28 @@ import "../styles/dashboard.css";
 import apiClient from "../services/api-client";
 import editIcon from "../assets/edit.png";
 import deleteIcon from "../assets/delete.png";
+import commentIcon from "../assets/comment.png";
+import avatar from "../assets/default-avatar.png";
 
 const Dashboard = () => {
     const authContext = useContext(AuthContext);
     if (!authContext) throw new Error("AuthContext is null");
 
     const { user, logout } = authContext;
-    interface Post {
-        _id: string;
-        title: string;
-        content?: string;
-        imageUrl?: string;
-        likes: number;
-    }
 
     interface Post {
         _id: string;
         title: string;
         content?: string;
         imageUrl?: string;
-        likes: number; // ✅ Ensure likes is defined as a number
+        likes: number;
+        comments: Comment[];
+    }
+
+    interface Comment {
+        _id: string;
+        content: string;
+        sender: { username: string };
     }
 
     const [userInput, setUserInput] = useState("");  
@@ -45,6 +47,8 @@ const Dashboard = () => {
     const [error, setError] = useState<string | null>(null);
     const [submitted, setSubmitted] = useState(false);
     const [profileImage, setProfileImage] = useState(user?.profilePicture || "/default-avatar.png");
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+    const [showCommentsPopup, setShowCommentsPopup] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -76,16 +80,19 @@ const Dashboard = () => {
         
                 setUserPosts(formattedPosts);
                 fetchAISuggestions(); // ✅ Fetch AI suggestions after posts are set
-    
+                
+                let newProfileImage = avatar; // Default fallback
+
                 // ✅ Ensure the profile image is set correctly
                 if (user.profilePicture) {
-                    const imageUrl = user.profilePicture.startsWith("/uploads/")
+                    newProfileImage = user.profilePicture.startsWith("/uploads/")
                         ? `${imageBaseUrl}${user.profilePicture}`
                         : user.profilePicture;
-    
-                    console.log("✅ Debug: Processed Profile Picture URL:", imageUrl);
-                    setProfileImage(imageUrl);
                 }
+
+                console.log("✅ Debug: Processed Profile Picture URL:", newProfileImage);
+                setProfileImage(newProfileImage);
+                
             } catch (error) {
                 console.error("❌ Error fetching user posts:", error);
                 setUserPosts([]); // ✅ Prevent crash if fetching fails
@@ -99,6 +106,23 @@ const Dashboard = () => {
         if (e.target.files && e.target.files[0]) {
             setImage(e.target.files[0]);
             setPreviewImage(URL.createObjectURL(e.target.files[0]));
+        }
+    };
+
+    // ✅ Fetch comments for selected post
+    const handleFetchComments = async (postId: string) => {
+        try {
+            const response = await apiClient.get(`/comments/post/${postId}`);
+            const updatedPosts = userPosts.map((post) =>
+                post._id === postId ? { ...post, comments: response.data } : post
+            );
+            setUserPosts(updatedPosts);
+
+            const post = updatedPosts.find((p) => p._id === postId);
+            setSelectedPost(post || null);
+            setShowCommentsPopup(true);
+        } catch (error) {
+            console.error("❌ Error fetching comments:", error);
         }
     };
 
@@ -221,7 +245,7 @@ const Dashboard = () => {
                             src={profileImage}
                             alt="Profile"
                             className="profile-img"
-                            onError={() => setProfileImage("/default-avatar.png")}
+                            onError={() => setProfileImage(avatar)}
                         />
                     )}
                     <h3>Welcome, {user?.username || "Guest"}!</h3>
@@ -343,9 +367,11 @@ const Dashboard = () => {
                                     )}
     
                                     <p>❤️ {Array.isArray(post.likes) ? post.likes.length : post.likes ?? 0} Likes</p>
+                                    <p>💬 {post.comments?.length || 0} Comments</p>
                                     <div className="post-actions">
                                         <button onClick={() => handleEditClick(post)}><img src={editIcon} alt="Edit" /></button>
                                         <button onClick={() => handleDeletePost(post._id)}><img src={deleteIcon} alt="Delete" /></button>
+                                        <button onClick={() => handleFetchComments(post._id)}><img src={commentIcon} alt="View Comments" /></button>
                                     </div>
                                 </>
                             )}
@@ -353,6 +379,24 @@ const Dashboard = () => {
                     ))
                 ) : <p>You have not created any posts yet.</p>}
             </div>
+            {/* 🔹 Comments Modal */}
+            {showCommentsPopup  && selectedPost && (
+                <div className="comments-modal">
+                    <div className="modal-content">
+                        <h3>Comments on "{selectedPost.title}"</h3>
+                        <button className="close-btn" onClick={() => setShowCommentsPopup(false)}>✖</button>
+                        {selectedPost.comments.length > 0 ? (
+                            selectedPost.comments.map((comment) => (
+                                <div key={comment._id} className="comment">
+                                    <strong>{comment.sender.username}:</strong> {comment.content}
+                                </div>
+                            ))
+                        ) : (
+                            <p>No comments yet.</p>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );    
 };

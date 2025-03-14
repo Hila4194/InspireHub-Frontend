@@ -75,3 +75,37 @@
   border-color: red !important;
   background-color: #ffe6e6 !important;
 }
+
+/* Avatar Selection Section */
+.avatar-selection {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.avatar-selection h4 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.avatar-options {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.avatar-option {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.avatar-option:hover {
+  transform: scale(1.1);
+}
+
+.avatar-option.selected {
+  border-color: #007bff;
+}
