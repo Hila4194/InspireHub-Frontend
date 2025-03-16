@@ -73,6 +73,9 @@ h2 {
 
 .message {
     margin-top: 15px;
-    color: #4CAF50;
+    color: #10e317;
     font-weight: bold;
+}
+.text-danger {
+    color: rgb(8, 8, 8);
 }

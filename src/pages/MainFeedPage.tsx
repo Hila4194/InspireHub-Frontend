@@ -7,7 +7,6 @@ import { AuthContext } from "../context/AuthContext";
 import avatar from "../assets/default-avatar.png"; // ✅ Import default avatar
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
-
 interface Post {
   _id: string;
   title: string;
@@ -46,7 +45,7 @@ const MainFeedPage = () => {
         const posts = postResponse.data;
 
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "");
-        const imageBaseUrl = apiBaseUrl.replace("/api", ""); 
+        const imageBaseUrl = apiBaseUrl.replace("/api", "");
 
         // ✅ Ensure correct profile picture & post image formatting
         const formattedPosts = posts.map((post: Post) => ({
@@ -116,7 +115,7 @@ const MainFeedPage = () => {
     setNewComment("");
   };
 
-  // ✅ Handle Adding a Comment
+  // ✅ Handle Adding a Comment (Closes popup after posting)
   const handleAddComment = async () => {
     if (!selectedPost || !user) return;
     if (!newComment.trim()) return alert("Please enter a comment!");
@@ -137,6 +136,7 @@ const MainFeedPage = () => {
       ));
 
       setNewComment("");
+      closeCommentsPopup(); // ✅ Close popup after posting
     } catch (error) {
       console.error("❌ Error adding comment:", error);
     }
@@ -144,7 +144,7 @@ const MainFeedPage = () => {
 
   return (
     <div className="main-feed-container">
-      <h2 className="main-feed-title">Main Feed</h2>
+      <h2 className="main-feed-title" style={{ color: "white", textDecoration: "underline" }}>Main Feed</h2>
 
       {quote && (
         <div className="quote-box">
@@ -158,7 +158,7 @@ const MainFeedPage = () => {
       ) : (
         <TransitionGroup className="post-grid">
           {posts.length === 0 ? (
-            <p className="no-posts-message">No posts available yet.</p>
+            <p className="no-posts-message">No posts available yet!</p>
           ) : (
             posts.map((post) => (
               <CSSTransition key={post._id} timeout={500} classNames="fade">
@@ -170,7 +170,7 @@ const MainFeedPage = () => {
                       className="post-profile-pic"
                       onError={(e) => e.currentTarget.src = avatar}
                     />
-                    <span className="post-owner">By: {post.sender.username || "Unknown"}</span>
+                    <span className="post-owner">{post.sender.username || "Unknown"}</span>
                   </div>
 
                   <h3 className="post-title">{post.title}</h3>
@@ -201,13 +201,13 @@ const MainFeedPage = () => {
       )}
 
       <div className="pagination-buttons">
-      <button className="pagination-btn" onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>
-  ◀ Previous
-</button>
-<span className="page-number">Page {page}</span>
-<button className="pagination-btn" onClick={() => setPage((prev) => prev + 1)} disabled={!hasMore}>
-  Next ▶
-</button>
+        <button className="pagination-btn" onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>
+          ◀ Previous
+        </button>
+        <span className="page-number">Page {page}</span>
+        <button className="pagination-btn" onClick={() => setPage((prev) => prev + 1)} disabled={!hasMore}>
+          Next ▶
+        </button>
       </div>
 
       {selectedPost && (
