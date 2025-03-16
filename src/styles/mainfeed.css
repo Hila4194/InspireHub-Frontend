@@ -1,6 +1,6 @@
 /* ✅ Center the main feed */
 .main-feed-container {
-  max-width: 1000px; /* ✅ Keeps content centered */
+  max-width: 1000px;
   margin: auto;
   padding: 20px;
   text-align: center;
@@ -11,27 +11,28 @@
   font-size: 28px;
   font-weight: bold;
   margin-bottom: 20px;
+  color: white;
 }
 
 /* ✅ Grid layout for posts */
 .post-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* ✅ Increased fixed post size */
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 25px;
 }
 
 /* ✅ Post Card Styling */
 .post-card {
-  background-color: white; /* ✅ Dark mode background */
-  color: white; /* ✅ Ensures text is readable */
-  padding: 25px; /* ✅ More padding for better spacing */
+  background-color: white;
+  color: black;
+  padding: 25px;
   border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-  text-align: left; /* ✅ Aligns text properly */
+  text-align: left;
   transition: transform 0.3s ease-in-out;
-  max-width: 600px; /* ✅ Fixed size for uniform appearance */
+  max-width: 600px;
   margin: auto;
-  border: 2px solid #444; /* ✅ Subtle border */
+  border: 2px solid #444;
 }
 
 .post-card:hover {
@@ -40,91 +41,89 @@
 
 /* ✅ Post Title */
 .post-title {
-  font-size: 24px; /* ✅ Larger title */
+  font-size: 24px;
   font-weight: bold;
   margin-bottom: 12px;
 }
 
 /* ✅ Post Header (User Info) */
 .post-header {
-  display: flex; /* ✅ Ensures profile picture & username are side by side */
+  display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
-  background-color: rgb(17, 17, 97); /* ✅ Dark background to match style */
+  background-color: rgb(17, 17, 97);
   padding: 8px;
   border-radius: 8px;
 }
 
-/* ✅ Fix profile picture size & style */
+/* ✅ Profile Picture */
 .post-profile-pic {
-  width: 45px; /* ✅ Slightly bigger for visibility */
+  width: 45px;
   height: 45px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #0b0127; /* ✅ Gold border for emphasis */
+  border: 2px solid #0b0127;
 }
 
-/* ✅ Fix username styling */
+/* ✅ Username Styling */
 .post-owner {
   font-size: 16px;
   font-weight: bold;
-  color: white; /* ✅ Gold text for contrast */
+  color: white;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* ✅ Post Image */
 .post-image {
   width: 100%;
-  max-height: 400px; /* ✅ Bigger image size */
+  max-height: 400px;
   object-fit: cover;
   border-radius: 10px;
   margin-top: 10px;
 }
 
-/* ✅ Post Text Content */
+/* ✅ Post Content */
 .post-content {
-  font-size: 20px; /* ✅ Larger font size */
-  color: #ddd; /* ✅ Light text for contrast */
+  font-size: 20px;
+  color: #ddd;
   margin-top: 12px;
   text-align: left;
   font-weight: 500;
 }
 
-/* ✅ Quote Box Styling */
+/* ✅ Quote Box with Eye-Catching Animation */
+@keyframes glowingQuote {
+  0% { transform: scale(1); opacity: 0.8; text-shadow: none; }
+  50% { transform: scale(1.05); opacity: 1; text-shadow: 0 0 20px rgba(0, 234, 255, 0.8); }
+  100% { transform: scale(1); opacity: 0.8; text-shadow: none; }
+}
+
 .quote-box {
-  background-color: #f4f4f4;
+  background-color: rgba(255, 255, 255, 0.1);
   padding: 15px;
-  border-left: 5px solid #007bff;
+  border-left: 5px solid #00eaff;
   margin-bottom: 20px;
   text-align: center;
   font-style: italic;
   border-radius: 8px;
+  animation: glowingQuote 3s ease-in-out infinite alternate;
 }
 
+/* ✅ Quote Text */
 .quote-text {
-  font-size: 18px;
-  color: #333;
-}
-
-.quote-author {
-  font-size: 16px;
+  font-size: 22px;
   font-weight: bold;
-  color: #007bff;
-  margin-top: 5px;
+  color: white;
+  transition: all 0.3s ease;
 }
 
-.like-button {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
+/* ✅ Quote Author */
+.quote-author {
   font-size: 18px;
-  padding: 5px;
-  transition: 0.2s;
-}
-
-.like-button:hover {
-  transform: scale(1.1);
+  font-weight: bold;
+  color: #00eaff;
+  margin-top: 5px;
 }
 
 /* ✅ Ensure post image is visible */
@@ -214,85 +213,92 @@
 /* ✅ Responsive Adjustments */
 @media (max-width: 768px) {
   .post-grid {
-      grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
   }
 
   .post-card {
-      max-width: 90%;
+    max-width: 90%;
   }
 }
 
-/* ✅ Pagination Buttons Container */
+/* ✅ Pagination Buttons */
 .pagination-buttons {
   display: flex;
   justify-content: center;
-  gap: 12px; /* 🔥 Reduced gap for compact layout */
+  gap: 12px;
   margin-top: 20px;
   align-items: center;
 }
 
-/* ✅ Smaller "Next" & "Previous" Buttons */
 .pagination-btn {
-  background: linear-gradient(135deg, #007bff, #00d4ff) !important;
-  color: white !important;
-  border: none !important;
-  padding: 8px 14px !important; /* 🔥 Smaller padding */
-  cursor: pointer !important;
-  border-radius: 6px !important; /* 🔥 Slightly smaller border-radius */
-  font-weight: bold !important;
-  font-size: 14px !important; /* 🔥 Reduced font size */
-  font-family: 'Poppins', sans-serif !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2) !important; /* 🔥 Softer shadow */
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important; /* 🔥 Slightly reduced spacing */
-  outline: none !important;
+  background: linear-gradient(135deg, #007bff, #00d4ff);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  outline: none;
 }
 
-/* ✅ Hover Effect */
 .pagination-btn:hover {
-  background: linear-gradient(135deg, #0056b3, #0095c2) !important;
-  transform: scale(1.05) !important; /* 🔥 Less aggressive scaling */
-  color: white !important;
+  background: linear-gradient(135deg, #0056b3, #0095c2);
+  transform: scale(1.05);
+  color: white;
 }
 
-/* ✅ Disabled State */
 .pagination-btn:disabled {
-  background: #bbbbbb !important;
-  cursor: not-allowed !important;
-  box-shadow: none !important;
-  color: white !important;
-  opacity: 0.5 !important; /* 🔥 Slightly reduced opacity */
+  background: #bbbbbb;
+  cursor: not-allowed;
+  box-shadow: none;
+  color: white;
+  opacity: 0.5;
 }
 
 /* ✅ Page Number Styling */
 .page-number {
-  font-weight: bold !important;
-  font-size: 16px !important; /* 🔥 Slightly reduced font size */
-  color: black !important;
-  padding: 3px 8px !important;
-  font-family: inherit !important;
+  font-weight: bold;
+  font-size: 16px;
+  color: rgb(248, 248, 248);
+  padding: 3px 8px;
+  font-family: inherit;
 }
 
-/* ✅ Active Page Number Styling */
 .page-number.active {
-  text-decoration: underline !important;
-  font-size: 18px !important;
-  color: black !important;
+  text-decoration: underline;
+  font-size: 18px;
+  color: black;
 }
 
 /* ✅ Responsive Adjustments */
 @media (max-width: 768px) {
   .pagination-buttons {
-    gap: 8px !important; /* 🔥 Closer spacing on mobile */
+    gap: 8px;
   }
 
   .pagination-btn {
-    padding: 6px 12px !important; /* 🔥 Even smaller buttons for mobile */
-    font-size: 12px !important;
+    padding: 6px 12px;
+    font-size: 12px;
   }
 
   .page-number {
-    font-size: 14px !important;
+    font-size: 14px;
   }
+}
+.no-posts-message {
+  font-size: 20px;
+  color: white;
+  margin-top: 20px;
+}
+
+.loading-text {
+  font-size: 20px;
+  color: white;
+  margin-top: 20px;
 }

@@ -80,7 +80,7 @@ const LoginPage = () => {
     return (
         <div className="login-container">
             <div className="login-card">
-                <h2 className="text-center">Login</h2>
+            <h2 className="text-center" style={{ color: "white", textDecoration: "underline" }}>Login</h2>
                 {error && <div className="alert alert-danger text-center">{error}</div>}
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
