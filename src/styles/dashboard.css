@@ -221,22 +221,30 @@ body {
 }
 
 /* 🚀 Comments Modal */
-/* 🚀 Comments Modal - Ensure Text is Black */
 .comments-modal {
   position: absolute;
   top: var(--modal-top, 50%);
   left: 50%;
   transform: translate(-50%, 0);
-  background: rgba(255, 255, 255, 0.9); /* Light background for better contrast */
+  background: rgba(255, 255, 255, 0.9);
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  max-width: 400px;
-  width: 90%;
+  max-width: fit-content; /* ✅ Adjust width dynamically */
+  width: auto; /* ✅ Allow it to resize dynamically */
+  min-width: 250px; /* ✅ Ensure it doesn't get too small */
   z-index: 1000;
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(0, 0, 0, 0.3); /* Darker border for contrast */
-  color: black !important; /* ✅ Ensures all text inside is black */
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  color: black !important;
+  white-space: nowrap; /* ✅ Prevents text from breaking into multiple lines */
+  overflow: hidden;
+}
+
+/* Comments - Username Styling */
+.comment strong {
+  color: #007bff !important; /* Change username color to blue */
+  font-weight: bold;
 }
 
 /* 🚀 Comment Text - Ensure Black */
@@ -271,6 +279,30 @@ body {
       text-align: center;
   }
 }
+
+/* 🚀 Comments Header - Centers the Close Button */
+.comments-header {
+  position: relative;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px; /* ✅ Creates spacing between the close button and the title */
+}
+
+/* 🚀 Scoped Close Button - Only for Dashboard Comments Modal */
+.comments-modal .close-btn {
+  position: absolute;
+  top: -15px; /* ✅ Stays above the title */
+  left: 50%;
+  right: 50%;
+  background: none;
+  border: none;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #007bff !important; /* ✅ Ensures it's blue */
+  transition: color 0.2s ease-in-out; /* ✅ Only color changes on hover, no movement */
+}
+
 /* 🚀 Centered Image Preview */
 .image-preview-container {
   display: flex;
@@ -306,4 +338,113 @@ body {
   object-fit: contain; /* Ensures no cropping */
   border-radius: 10px;
   align-items: center;
+}
+
+/* 🚀 Fix Image Preview in Edit Mode */
+.edit-image-preview {
+  max-width: 200%; /* ✅ Ensures the image doesn't exceed the card width */
+  max-height: 350px; /* ✅ Keeps image height manageable */
+  width: auto;
+  height: auto;
+  object-fit: contain; /* ✅ Maintains aspect ratio without distortion */
+  border-radius: 10px;
+  display: block;
+  margin: 10px auto; /* ✅ Centers the image inside the card */
+}
+
+/* 🚀 Center and Style Save & Cancel Buttons */
+.edit-buttons {
+  display: flex;
+  justify-content: center; /* ✅ Centers the buttons */
+  gap: 10px; /* ✅ Adds space between them */
+  margin-top: 10px;
+}
+
+/* 🚀 Match Generate Button Style */
+.edit-buttons button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  width: 120px; /* ✅ Ensures consistent size */
+  text-align: center;
+}
+
+/* 🚀 Save Button - Blue (Like Generate) */
+.save-btn {
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: white;
+}
+
+.save-btn:hover {
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.7);
+}
+
+/* 🚀 Cancel Button - Gray */
+.cancel-btn {
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: white;;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.7);
+}
+
+/* 🚀 Edit Post Form - Ensures Clean Layout */
+.edit-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* ✅ Adds spacing between elements */
+}
+
+/* 🚀 Input & Textarea Fields */
+.edit-post-form label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.edit-post-form input,
+.edit-post-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+/* 🚀 File Input (For Image Posts) */
+.edit-post-form input[type="file"] {
+  padding: 5px;
+}
+
+/* 🚀 Centered Notification Styling */
+.notification {
+  margin: 10px auto; /* ✅ Centers horizontally */
+  padding: 10px 15px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  width: fit-content; /* ✅ Adjusts width dynamically */
+  max-width: 80%; /* ✅ Prevents it from being too wide */
+}
+
+/* ✅ Success Message */
+.notification.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* ❌ Error Message */
+.notification.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }

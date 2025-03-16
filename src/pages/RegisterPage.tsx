@@ -44,7 +44,7 @@ const RegisterPage = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setProfilePicture(file);
-      setSelectedAvatar(null); // Clear avatar selection if uploading a custom picture
+      setSelectedAvatar(null);
     }
   };
 
@@ -88,7 +88,7 @@ const RegisterPage = () => {
     setMessage("");
 
     if (!validateInputs()) {
-      return; // Stop submission if validation fails
+      return;
     }
 
     const formData = new FormData();
@@ -136,7 +136,7 @@ const RegisterPage = () => {
         throw new Error("Google credential is missing");
       }
 
-      const response = await apiClient.post("/auth/google", { credential }); // ✅ Only sending { credential }
+      const response = await apiClient.post("/auth/google", { credential });
 
       console.log("✅ Google Signin success!", response.data);
       return response.data;
@@ -152,12 +152,11 @@ const RegisterPage = () => {
     try {
       const res = await googleSignin(credentialResponse);
 
-      // ✅ Store the full user object, not just the ID
       localStorage.setItem("user", JSON.stringify(res));
-      setUser(res); // ✅ Update AuthContext
+      setUser(res);
 
       console.log("Google Signin success!", res);
-      navigate("/dashboard"); // ✅ Redirect to the dashboard
+      navigate("/dashboard");
     } catch (error) {
       console.log("Google Signin error!", error);
     }
@@ -171,8 +170,6 @@ const RegisterPage = () => {
     <div className="register-container">
       <div className="register-card">
         <h2 style={{ color: "white", textDecoration: "underline" }}>Register</h2>
-
-        {/* Profile Picture Preview */}
         <div className="profile-picture-container">
           <img
             src={previewImage || ""}
@@ -187,7 +184,6 @@ const RegisterPage = () => {
           <img src={femaleAvatar} alt="Female Avatar" className={`avatar-option ${selectedAvatar === femaleAvatar ? "selected" : ""}`} onClick={() => handleAvatarSelect(femaleAvatar)} />
         </div>
       </div>
-        {/* Custom File Upload Button */}
         <div className="upload-button-container">
           <label
             htmlFor="profile-picture"
@@ -203,9 +199,7 @@ const RegisterPage = () => {
             accept="image/*"
           />
         </div>
-
         <form onSubmit={handleRegister}>
-          {/* Username */}
           <div className="mb-3">
             <label className="form-label">Username</label>
             <input
@@ -219,8 +213,6 @@ const RegisterPage = () => {
               <div className="invalid-feedback">{errors.username}</div>
             )}
           </div>
-
-          {/* Email */}
           <div className="mb-3">
             <label className="form-label">Email</label>
             <input
@@ -234,8 +226,6 @@ const RegisterPage = () => {
               <div className="invalid-feedback">{errors.email}</div>
             )}
           </div>
-
-          {/* Password */}
           <div className="mb-3">
             <label className="form-label">Password</label>
             <input
@@ -253,10 +243,7 @@ const RegisterPage = () => {
             Register
           </button>
         </form>
-
-        {/* ✅ Show messages */}
         {message && <p className={`mt-3 ${message.startsWith("✅") ? "text-success" : "text-danger"}`}>{message}</p>}
-
         <p className="mt-3">Already have an account? <Link to="/login">Login here</Link></p>
         <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginError} theme="outline" size="large" />
       </div>

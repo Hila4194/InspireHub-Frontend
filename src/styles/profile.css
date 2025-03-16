@@ -1,3 +1,4 @@
+
 .profile-container {
     max-width: 400px;
     margin: 40px auto;
@@ -24,16 +25,16 @@ h2 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 25px; /* ✅ Increased space below the profile picture */
+    margin-bottom: 25px;
 }
 
 .profile-picture {
-    width: 140px; /* ✅ Increased picture size */
-    height: 140px; /* ✅ Increased picture size */
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #4CAF50;
-    margin-bottom: 12px; /* ✅ Added space between the picture and the button */
+    margin-bottom: 12px;
 }
 
 .file-input {
@@ -43,7 +44,7 @@ h2 {
 .profile-details {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* ✅ Increased spacing between input fields */
+    gap: 15px;
 }
 
 .profile-details label {
@@ -57,7 +58,7 @@ h2 {
 }
 
 .save-button {
-    margin-top: 30px; /* ✅ Added more space between the last input and the button */
+    margin-top: 30px;
     padding: 10px 15px;
     border: none;
     background-color: #166519;

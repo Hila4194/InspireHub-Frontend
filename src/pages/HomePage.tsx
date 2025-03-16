@@ -1,14 +1,18 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.webp";
+import "../styles/home.css";
 
 const HomePage = () => {
   return (
     <div className="container text-center mt-5">
-      <h1>Welcome to InspireHub</h1>
-      <img src={logo} alt="InspireHub Logo" className="auth-logo" />
-      <p>Your platform for sharing and discovering new ideas!</p>
-      <Link to="/login" className="btn btn-primary">Login</Link>
-      <Link to="/register" className="btn btn-outline-primary ms-3">Register</Link>
+      <h1 className="homepage-title">Welcome to InspireHub!</h1>
+      <img src={logo} alt="InspireHub Logo" className="homepage-logo" />
+      <p className="homepage-subtext">A creative space to share, explore, and inspire new ideas :)</p>
+      <p className="homepage-subtext">Try it now!</p>
+      <div className="d-flex justify-content-center mt-3">
+        <Link to="/login" className="homepage-buttons me-2">Login</Link>
+        <Link to="/register" className="homepage-buttons">Register</Link>
+      </div>
     </div>
   );
 };
