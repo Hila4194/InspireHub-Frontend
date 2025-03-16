@@ -214,7 +214,7 @@ const MainFeedPage = () => {
         <div className="popup-overlay">
           <div className="popup-content">
             <button className="close-btn" onClick={closeCommentsPopup}>✖</button>
-            <h3>Comments on "{selectedPost.title}"</h3>
+            <h3>Comments on post: "{selectedPost.title}"</h3>
 
             <div className="comments-list">
               {selectedPost.comments.length > 0 ? (

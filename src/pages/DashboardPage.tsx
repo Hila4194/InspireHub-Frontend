@@ -38,6 +38,7 @@ const Dashboard = () => {
     const [image, setImage] = useState<File | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+    const [postNotification, setPostNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
     const [editingPostId, setEditingPostId] = useState<string | null>(null);
     const [editedTitle, setEditedTitle] = useState("");
     const [editedContent, setEditedContent] = useState("");
@@ -218,9 +219,9 @@ const Dashboard = () => {
             setUserPosts(userPosts.map((post) => (post._id === postId ? formattedUpdatedPost : post))); // ✅ Update post list immediately
             setEditingPostId(null);
             setPreviewImage(null); // ✅ Reset preview after saving
-            setNotification({ message: "✅ Post updated successfully!", type: "success" });
+            setPostNotification({ message: "✅ Post updated successfully!", type: "success" });
         } catch {
-            setNotification({ message: "❌ Failed to update post. Please try again.", type: "error" });
+            setPostNotification({ message: "❌ Failed to update post. Please try again.", type: "error" });
         }
     };    
 
@@ -228,9 +229,9 @@ const Dashboard = () => {
         try {
             await deletePost(postId);
             setUserPosts(userPosts.filter((post) => post._id !== postId));
-            setNotification({ message: "✅ Post deleted successfully!", type: "success" });
+            setPostNotification({ message: "✅ Post deleted successfully!", type: "success" });
         } catch {
-            setNotification({ message: "❌ Failed to delete post. Please try again.", type: "error" });
+            setPostNotification({ message: "❌ Failed to delete post. Please try again.", type: "error" });
         }
     };
 
@@ -346,17 +347,44 @@ const Dashboard = () => {
             </div>
     
             {/* 🔹 User Posts Section */}
-            <div className="user-posts-section">
-                <h3>Your Posts:</h3>
-                {userPosts.length > 0 ? (
-                    userPosts.map((post) => (
-                        <div key={post._id} className="post-card">
-                            {editingPostId === post._id ? (
+<div className="user-posts-section">
+    <h3>Your Posts:</h3>
+        {/* ✅ Display success/error messages here */}
+        {postNotification && (
+        <div className={`notification ${postNotification.type}`}>
+            {postNotification.message}
+        </div>
+    )}
+    {userPosts.length > 0 ? (
+        userPosts.map((post) => (
+            <div key={post._id} className="post-card">
+                {editingPostId === post._id ? (
+                    <>
+                        {/* Edit Post Form */}
+                        <div className="edit-post-form">
+                            {/* Title Field */}
+                            <label>Title</label>
+                            <input 
+                                type="text" 
+                                value={editedTitle} 
+                                onChange={(e) => setEditedTitle(e.target.value)} 
+                            />
+
+                            {/* Content Field (Only for Text Posts) */}
+                            {!post.imageUrl && (
                                 <>
-                                    <input type="text" value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
-                                    <textarea value={editedContent} onChange={(e) => setEditedContent(e.target.value)} />
-    
-                                    {/* ✅ Image Upload and Preview */}
+                                    <label>Content</label>
+                                    <textarea 
+                                        value={editedContent} 
+                                        onChange={(e) => setEditedContent(e.target.value)} 
+                                    />
+                                </>
+                            )}
+
+                            {/* Image Upload (Only for Image Posts) */}
+                            {post.imageUrl && (
+                                <>
+                                    <label>Choose New Image</label>
                                     <input 
                                         type="file" 
                                         accept="image/*" 
@@ -368,65 +396,79 @@ const Dashboard = () => {
                                             }
                                         }} 
                                     />
-    
-                                    {/* ✅ Show preview before saving */}
-                                    {previewImage && <img src={previewImage} alt="Preview" className="preview-image" />}
-    
-                                    <button onClick={() => handleUpdatePost(post._id)}>Save</button>
-                                    <button onClick={() => setEditingPostId(null)}>Cancel</button>
-                                </>
-                            ) : (
-                                <>
-                                    <h4>{post.title}</h4>
-    
-                                    {/* ✅ Ensure post images load correctly */}
-                                    {post.imageUrl ? (
-                                        <img 
-                                            src={post.imageUrl} 
-                                            alt="Post" 
-                                            className="post-image"
-                                            onLoad={(e) => e.currentTarget.classList.add("loaded")}
-                                            onError={(e) => {
-                                                console.error("❌ Image failed to load:", e.currentTarget.src);
-                                                e.currentTarget.style.display = "none"; // ✅ Hide broken images
-                                            }}
-                                        />
-                                    ) : (
-                                        <p>{post.content}</p>
-                                    )}
-    
-                                    <p>❤️ {Array.isArray(post.likes) ? post.likes.length : post.likes ?? 0} Likes</p>
-                                    <p>💬 {post.comments?.length || 0} Comments</p>
-                                    <div className="post-actions">
-                                        <button onClick={() => handleEditClick(post)}><img src={editIcon} alt="Edit" /></button>
-                                        <button onClick={() => handleDeletePost(post._id)}><img src={deleteIcon} alt="Delete" /></button>
-                                        <button onClick={() => handleFetchComments(post._id)}><img src={commentIcon} alt="View Comments" /></button>
-                                    </div>
                                 </>
                             )}
-                        </div>
-                    ))
-                ) : <p>You have not created any posts yet!</p>}
-            </div>
-            {/* 🔹 Comments Modal */}
-            {showCommentsPopup && selectedPost && (
-    <div className="comments-modal" style={{ "--modal-top": `${modalTop}px` } as React.CSSProperties}>
-        <div className="modal-content">
-            <h3>Comments on "{selectedPost.title}"</h3>
-            <button className="close-btn" onClick={() => setShowCommentsPopup(false)}>✖</button>
-            {selectedPost.comments.length > 0 ? (
-                selectedPost.comments.map((comment) => (
-                    <div key={comment._id} className="comment">
-                        <strong>{comment.sender.username}:</strong> {comment.content}
-                    </div>
-                ))
-            ) : (
-                <p>No comments yet!</p>
-            )}
-        </div>
-    </div>
-)}
 
+                            {/* ✅ Show preview before saving */}
+                            {previewImage && <img src={previewImage} alt="Preview" className="edit-image-preview" />}
+                        </div>
+
+                        {/* Save & Cancel Buttons */}
+                        <div className="edit-buttons">
+                            <button className="save-btn" onClick={() => handleUpdatePost(post._id)}>Save</button>
+                            <button className="cancel-btn" onClick={() => setEditingPostId(null)}>Cancel</button>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <h4>{post.title}</h4>
+
+                        {/* ✅ Ensure post images load correctly */}
+                        {post.imageUrl ? (
+                            <img 
+                                src={post.imageUrl} 
+                                alt="Post" 
+                                className="post-image"
+                                onLoad={(e) => e.currentTarget.classList.add("loaded")}
+                                onError={(e) => {
+                                    console.error("❌ Image failed to load:", e.currentTarget.src);
+                                    e.currentTarget.style.display = "none"; // ✅ Hide broken images
+                                }}
+                            />
+                        ) : (
+                            <p>{post.content}</p>
+                        )}
+
+                        <p>❤️ {Array.isArray(post.likes) ? post.likes.length : post.likes ?? 0} Likes</p>
+                        <p>💬 {post.comments?.length || 0} Comments</p>
+                        <div className="post-actions">
+                            <button onClick={() => handleEditClick(post)}><img src={editIcon} alt="Edit" /></button>
+                            <button onClick={() => handleDeletePost(post._id)}><img src={deleteIcon} alt="Delete" /></button>
+                            <button onClick={() => handleFetchComments(post._id)}><img src={commentIcon} alt="View Comments" /></button>
+                        </div>
+                    </>
+                )}
+            </div>
+        ))
+    ) : <p>You have not created any posts yet!</p>}
+</div>
+
+            {/* Comments Modal */}
+{showCommentsPopup && selectedPost && (
+  <div className="comments-modal" style={{ "--modal-top": `${modalTop}px` } as React.CSSProperties}>
+    <div className="modal-content">
+      {/* Close Button Centered Above */}
+      <div className="comments-header">
+        <button className="close-btn" onClick={() => setShowCommentsPopup(false)}>✖</button>
+      </div>
+
+      {/* Title Below Close Button */}
+      <h3 className="comments-title">
+        Comments on post: "{selectedPost.title}"
+      </h3>
+
+      {selectedPost.comments.length > 0 ? (
+        selectedPost.comments.map((comment) => (
+          <div key={comment._id} className="comment">
+            <strong>{comment.sender.username}:</strong> {comment.content}
+          </div>
+        ))
+      ) : (
+        <p>No comments yet!</p>
+      )}
+    </div>
+  </div>
+)}
         </div>
     );    
 };

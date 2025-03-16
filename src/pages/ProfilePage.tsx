@@ -5,7 +5,7 @@ import "../styles/profile.css";
 import { useNavigate } from "react-router-dom";
 import { User } from "../context/AuthContext";
 import avatar from "../assets/default-avatar.png";
-import { z } from "zod"; // ✅ Import Zod for validation
+import { z } from "zod";
 
 // ✅ Zod Schema for Username Validation (Email & Password Locked)
 const usernameSchema = z.object({
@@ -23,7 +23,7 @@ const ProfilePage: React.FC = () => {
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
     const [previewImage, setPreviewImage] = useState(user?.profilePicture || avatar);
     const [message, setMessage] = useState("");
-    const [errors, setErrors] = useState<{ username?: string }>({}); // ✅ Error state
+    const [errors, setErrors] = useState<{ username?: string }>({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -142,13 +142,13 @@ const ProfilePage: React.FC = () => {
                     onChange={(e) => setUsername(e.target.value)} 
                     className={errors.username ? "error-input" : ""}
                 />
-                {errors.username && <p className="error-message text-danger">{errors.username}</p>} {/* ✅ Text in red */}
+                {errors.username && <p className="error-message text-danger">{errors.username}</p>}
 
                 <label>Email</label>
-                <input type="email" value={user?.email} disabled className="locked-input" /> {/* 🔒 Locked Field */}
+                <input type="email" value={user?.email} disabled className="locked-input" />
 
                 <label>Password</label>
-                <input type="password" value="********" disabled className="locked-input" /> {/* 🔒 Locked Field */}
+                <input type="password" value="********" disabled className="locked-input" />
             </div>
             <button type="submit" className="save-button" onClick={handleUpdate}>Update Profile</button>
             
@@ -156,7 +156,7 @@ const ProfilePage: React.FC = () => {
                 <p className={`mt-3 ${message.includes("✅") ? "text-success" : "text-danger"}`}>
                     {message}
                 </p>
-            )} {/* ✅ Now green for success messages */}
+            )}
         </div>
     );
 };

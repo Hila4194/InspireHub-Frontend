@@ -1,11 +1,10 @@
-/* === GLOBAL STYLES === */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* === BODY === */
 body {
   font-family: "Arial", sans-serif;
   background-color: #f8f9fa;
@@ -14,20 +13,17 @@ body {
   min-height: 100vh;
 }
 
-/* === CONTAINER === */
 .container {
   max-width: 1100px;
   margin: auto;
   padding: 20px;
 }
 
-/* === HEADINGS === */
 h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
   margin-bottom: 15px;
 }
 
-/* === BUTTONS === */
 button {
   cursor: pointer;
   transition: background 0.3s ease;
@@ -38,7 +34,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* === NAVBAR === */
 .navbar {
   background-color: #007bff;
   padding: 10px 0;
@@ -54,7 +49,6 @@ button:disabled {
   color: #007bff;
 }
 
-/* === FORMS === */
 .form-control {
   border-radius: 5px;
   padding: 10px;
@@ -67,13 +61,11 @@ button:disabled {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-/* === CARDS === */
 .card {
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* === FOOTER === */
 .footer {
   background-color: #343a40;
   color: white;

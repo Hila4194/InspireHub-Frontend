@@ -1,13 +1,12 @@
-/* 🚀 Full-Screen Centering */
+
 .register-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* ✅ Matches dashboard */
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
 }
 
-/* 🚀 Registration Card - Glassmorphism Effect */
 .register-card {
   background: rgba(255, 255, 255, 0.1);
   padding: 2rem;
@@ -20,7 +19,6 @@
   text-align: center;
 }
 
-/* 🚀 Title Styling */
 .register-title {
   font-size: 26px;
   font-weight: bold;
@@ -28,7 +26,6 @@
   margin-bottom: 1.5rem;
 }
 
-/* 🚀 Profile Picture Section */
 .profile-picture-container {
   margin-bottom: 15px;
 }
@@ -44,7 +41,6 @@
   margin: 0 auto;
 }
 
-/* 🚀 Avatar Selection */
 .avatar-selection {
   margin-bottom: 20px;
   text-align: center;
@@ -79,7 +75,6 @@
   border-color: #00eaff;
 }
 
-/* 🚀 Upload Button Styling */
 .upload-button-container {
   margin-bottom: 15px;
 }
@@ -108,20 +103,17 @@
   margin-right: 8px;
 }
 
-/* 🚀 Form Styling */
 .register-form {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* 🚀 Form Group */
 .form-group {
   width: 100%;
   margin-bottom: 1.2rem;
 }
 
-/* 🚀 Form Labels */
 .form-label {
   font-weight: bold;
   display: block;
@@ -130,7 +122,6 @@
   color: white;
 }
 
-/* 🚀 Input Fields */
 .form-control {
   width: 100%;
   padding: 12px;
@@ -143,13 +134,11 @@
   transition: 0.3s ease-in-out;
 }
 
-/* ✅ Input Field Hover & Focus Effects */
 .form-control:focus {
   background: rgba(255, 255, 255, 0.3);
   box-shadow: 0 0 10px rgba(0, 234, 255, 0.7);
 }
 
-/* 🚀 Submit Button Styling (Neon Effect) */
 .btn-primary {
   width: 100%;
   padding: 12px;
@@ -166,27 +155,23 @@
   transition: all 0.3s ease;
 }
 
-/* ✅ Hover Effect */
 .btn-primary:hover {
   background: linear-gradient(to right, #0072ff, #00c6ff);
   box-shadow: 0 0 15px rgba(0, 234, 255, 0.7);
   transform: scale(1.05);
 }
 
-/* 🚀 Error Messages */
 .invalid-feedback {
   color: red;
   font-size: 14px;
   margin-top: 5px;
 }
 
-/* 🚀 Highlight Invalid Fields */
 .is-invalid {
   border-color: red !important;
   background-color: #ffe6e6 !important;
 }
 
-/* ✅ Responsive Design */
 @media (max-width: 768px) {
   .register-card {
       padding: 1.5rem;

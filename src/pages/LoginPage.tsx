@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import apiClient from "../services/api-client"; // ✅ Import API client
-import { GoogleLogin, CredentialResponse } from "@react-oauth/google"; // ✅ Import Google Sign-in
+import apiClient from "../services/api-client";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import "../styles/login.css";
 
 const LoginPage = () => {
@@ -10,7 +10,7 @@ const LoginPage = () => {
     if (!authContext) {
         throw new Error("AuthContext is null");
     }
-    const { login, setUser } = authContext; // ✅ Get setUser from AuthContext
+    const { login, setUser } = authContext;
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
@@ -28,7 +28,7 @@ const LoginPage = () => {
         }
 
         try {
-            await login(username, password); // ✅ Pass username and password
+            await login(username, password);
             navigate("/dashboard");
         } catch (error) {
             setError("Invalid username or password. Please try again.");
@@ -62,12 +62,11 @@ const LoginPage = () => {
         try {
             const res = await googleSignin(credentialResponse);
 
-            // ✅ Store the full user object
             localStorage.setItem("user", JSON.stringify(res));
-            setUser(res); // ✅ Update AuthContext
+            setUser(res);
 
             console.log("Google Signin success!", res);
-            navigate("/dashboard"); // ✅ Redirect to the dashboard
+            navigate("/dashboard");
         } catch (error) {
             console.log("Google Signin error!", error);
         }
@@ -107,12 +106,9 @@ const LoginPage = () => {
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Login</button>
                 </form>
-
                 <div className="text-center mt-3">
                     <p>Don't have an account? <a href="/register">Register here</a></p>
                 </div>
-
-                {/* ✅ Google Login Button */}
                 <div className="text-center mt-3">
                     <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginError} theme="outline" size="large" />
                 </div>
