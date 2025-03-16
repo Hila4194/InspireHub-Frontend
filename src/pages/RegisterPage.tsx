@@ -170,7 +170,7 @@ const RegisterPage = () => {
   return (
     <div className="register-container">
       <div className="register-card">
-        <h2>Register</h2>
+        <h2 style={{ color: "white", textDecoration: "underline" }}>Register</h2>
 
         {/* Profile Picture Preview */}
         <div className="profile-picture-container">

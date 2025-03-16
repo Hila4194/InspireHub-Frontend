@@ -49,6 +49,8 @@ const Dashboard = () => {
     const [profileImage, setProfileImage] = useState(user?.profilePicture || "/default-avatar.png");
     const [selectedPost, setSelectedPost] = useState<Post | null>(null);
     const [showCommentsPopup, setShowCommentsPopup] = useState(false);
+    const [previewImageDimensions, setPreviewImageDimensions] = useState<{ width: number, height: number } | null>(null);
+    const [modalTop, setModalTop] = useState<number>(window.scrollY + window.innerHeight / 2 - 100);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -101,11 +103,27 @@ const Dashboard = () => {
     
         fetchData();
     }, [user]);    
+
+    const handleLogout = () => {
+        const confirmLogout = window.confirm("Are you sure you want to log out?");
+        if (confirmLogout) {
+            logout();
+        }
+    };
     
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setImage(e.target.files[0]);
-            setPreviewImage(URL.createObjectURL(e.target.files[0]));
+            const file = e.target.files[0];
+            setImage(file);
+            const imageUrl = URL.createObjectURL(file);
+            setPreviewImage(imageUrl);
+    
+            // Create an offscreen image to get the original size
+            const img = new Image();
+            img.src = imageUrl;
+            img.onload = () => {
+                setPreviewImageDimensions({ width: img.width, height: img.height });
+            };
         }
     };
 
@@ -117,14 +135,18 @@ const Dashboard = () => {
                 post._id === postId ? { ...post, comments: response.data } : post
             );
             setUserPosts(updatedPosts);
-
+    
             const post = updatedPosts.find((p) => p._id === postId);
             setSelectedPost(post || null);
+    
+            // ✅ Dynamically position modal relative to current scroll
+            setModalTop(window.scrollY + window.innerHeight / 2 - 100);
+            
             setShowCommentsPopup(true);
         } catch (error) {
             console.error("❌ Error fetching comments:", error);
         }
-    };
+    };    
 
     const createPostHandler = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -214,17 +236,16 @@ const Dashboard = () => {
 
     // Function to send user input to backend and get AI suggestions
     const fetchAISuggestions = async () => {
-        setSubmitted(true); // ✅ Mark that the button was clicked
-
-        if (!userInput.trim()) {  
+        setSubmitted(true); // ✅ Only now we allow errors to show
+    
+        if (!userInput.trim()) {
             setError("❌ Please enter some text before requesting AI suggestions.");
             return;
         }
-
-        // ✅ Clear error message on valid input
-        setError(null);
+    
+        setError(null); // ✅ Clear error when input is provided
         setLoadingSuggestions(true);
-
+    
         try {
             const response = await apiClient.post("/posts/suggestions", { userInput });
             setAiSuggestions(response.data.suggestions);
@@ -234,10 +255,11 @@ const Dashboard = () => {
         } finally {
             setLoadingSuggestions(false);
         }
-    };
+    };    
 
     return (
         <div className="dashboard-container">
+            <h2 style={{ color: "white", textDecoration: "underline", textAlign:"center" }}>My Dashboard</h2>
             <div className="dashboard-header">
                 <div className="profile-info">
                     {user?.profilePicture && (
@@ -249,9 +271,8 @@ const Dashboard = () => {
                         />
                     )}
                     <h3>Welcome, {user?.username || "Guest"}!</h3>
-                    <p className="dashboard-title">My Dashboard</p>
                 </div>
-                <button onClick={logout} className="btn btn-danger">Logout</button>
+                <button onClick={handleLogout} className="btn btn-danger">Logout</button>
             </div>
     
             {/* 🔹 AI-Based Content Suggestions Section */}
@@ -309,7 +330,15 @@ const Dashboard = () => {
                     {postType === "image" && (
                         <>
                             <input type="file" accept="image/*" onChange={handleImageChange} />
-                            {previewImage && <img src={previewImage} alt="Preview" className="preview-image" />}
+                            {previewImage && previewImageDimensions && (
+                            <div className="image-preview-container">
+                            <img 
+                            src={previewImage} 
+                            alt="Preview" 
+                            className="image-preview"
+                            />
+                        </div>
+                        )}
                         </>
                     )}
                     <button type="submit" className="btn btn-success w-100">Create Post</button>
@@ -377,26 +406,27 @@ const Dashboard = () => {
                             )}
                         </div>
                     ))
-                ) : <p>You have not created any posts yet.</p>}
+                ) : <p>You have not created any posts yet!</p>}
             </div>
             {/* 🔹 Comments Modal */}
-            {showCommentsPopup  && selectedPost && (
-                <div className="comments-modal">
-                    <div className="modal-content">
-                        <h3>Comments on "{selectedPost.title}"</h3>
-                        <button className="close-btn" onClick={() => setShowCommentsPopup(false)}>✖</button>
-                        {selectedPost.comments.length > 0 ? (
-                            selectedPost.comments.map((comment) => (
-                                <div key={comment._id} className="comment">
-                                    <strong>{comment.sender.username}:</strong> {comment.content}
-                                </div>
-                            ))
-                        ) : (
-                            <p>No comments yet.</p>
-                        )}
+            {showCommentsPopup && selectedPost && (
+    <div className="comments-modal" style={{ "--modal-top": `${modalTop}px` } as React.CSSProperties}>
+        <div className="modal-content">
+            <h3>Comments on "{selectedPost.title}"</h3>
+            <button className="close-btn" onClick={() => setShowCommentsPopup(false)}>✖</button>
+            {selectedPost.comments.length > 0 ? (
+                selectedPost.comments.map((comment) => (
+                    <div key={comment._id} className="comment">
+                        <strong>{comment.sender.username}:</strong> {comment.content}
                     </div>
-                </div>
+                ))
+            ) : (
+                <p>No comments yet!</p>
             )}
+        </div>
+    </div>
+)}
+
         </div>
     );    
 };

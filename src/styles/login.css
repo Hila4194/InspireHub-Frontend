@@ -1,52 +1,113 @@
-/* Centering the entire login container */
+/* 🚀 Full-Screen Centering */
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* ✅ Matches dashboard */
 }
 
-/* Styling the login card */
+/* 🚀 Login Card - Glassmorphism Effect */
 .login-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.1);
     padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
     width: 100%;
     max-width: 400px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
 }
 
-/* Form elements - center aligned */
+/* 🚀 Title Styling */
+.login-title {
+    font-size: 26px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+/* 🚀 Form Styling */
 .login-form {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Style the form fields */
+/* 🚀 Form Group */
 .form-group {
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
 }
 
+/* 🚀 Form Labels */
 .form-label {
     font-weight: bold;
     display: block;
     margin-bottom: 5px;
     text-align: center;
+    color: white; /* ✅ Matches dashboard */
 }
 
+/* 🚀 Input Fields */
 .form-control {
     width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: 0.3s ease-in-out;
 }
 
-/* Style the submit button */
+/* ✅ Input Field Hover & Focus Effects */
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 234, 255, 0.7);
+}
+
+/* 🚀 Button Styling (Neon Effect) */
 .btn-primary {
-    padding: 10px;
-    border-radius: 5px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
     font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* ✅ Hover Effect */
+.btn-primary:hover {
+    background: linear-gradient(to right, #0072ff, #00c6ff);
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.7);
+    transform: scale(1.05);
+}
+
+/* ✅ Responsive Design */
+@media (max-width: 768px) {
+    .login-card {
+        padding: 1.5rem;
+    }
+    
+    .login-title {
+        font-size: 22px;
+    }
+
+    .btn-primary {
+        font-size: 0.9rem;
+    }
+}
+.text-center {
+    text-align: center;
+    color: white;
 }

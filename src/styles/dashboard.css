@@ -1,178 +1,202 @@
-/* ✅ Center the Dashboard */
+/* 🎨 Global Styling */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #3c83a1);
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+/* 🚀 Dashboard Container - Glassmorphism Effect */
 .dashboard-container {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 900px;
+  margin: 40px auto;
   padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white !important;
 }
 
-/* ✅ Centering the Notification Messages */
-.notification {
-  padding: 10px;
-  margin-bottom: 15px;
-  text-align: center;
-  border-radius: 5px;
-  font-weight: bold;
-  max-width: 400px;
-  margin: 15px auto;
-}
-
-/* ✅ Success Notification */
-.notification.success {
-  color: rgb(7, 151, 93);
-}
-
-/* ✅ Error Notification */
-.notification.error {
-  color: rgb(167, 9, 9);
-}
-
-/* ✅ Keep Header Layout Consistent */
+/* 🚀 Header */
 .dashboard-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-/* ✅ Center and Style the Dashboard Title */
-.dashboard-title {
-  text-align: center;
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-/* ✅ Reduce Welcome Message Size */
-.welcome-message {
-  font-size: 20px;
-  font-weight: 500;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-/* ✅ Profile Image & Info Styling */
 .profile-info {
   display: flex;
   align-items: center;
-  gap: 15px;
 }
 
-/* ✅ Profile Image Fixes */
 .profile-img {
-  width: 80px; /* ✅ Ensures consistent size */
-  height: 80px;
-  border-radius: 50%; /* ✅ Makes the image circular */
-  object-fit: cover; /* ✅ Prevents distortion */
-  border: 2px solid #ddd;
-  transition: 0.3s ease-in-out;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 12px;
+  object-fit: cover;
+  border: 3px solid #00eaff;
+  box-shadow: 0 0 10px rgba(0, 234, 255, 0.7);
 }
 
-/* ✅ Hover effect for profile image */
-.profile-img:hover {
-  transform: scale(1.05);
+.dashboard-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ddd;
 }
 
-/* ✅ Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-  .profile-img {
-    width: 60px;
-    height: 60px;
-  }
-
-  .profile-info {
-    flex-direction: column;
-    text-align: center;
-  }
+/* 🚀 Buttons - Neon Hover Effect */
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
 }
 
-/* ✅ Post Creation Styling */
-.create-post-card {
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+.btn-primary {
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.7);
+}
+
+.btn-danger {
+  background: linear-gradient(to right, #ff416c, #ff4b2b);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(to right, #ff4b2b, #ff416c);
+  box-shadow: 0 0 15px rgba(255, 75, 43, 0.7);
+}
+
+/* 🚀 AI Suggestions - Stylish Info Box */
+.ai-suggestions {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 15px;
+  border-radius: 12px;
+  border-left: 5px solid #00eaff;
   margin-bottom: 20px;
-  text-align: center;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-/* ✅ Side-by-Side Post Type Toggle */
+.suggestions-list li {
+  background: rgba(255, 255, 255, 0.3);
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  border-left: 5px solid #00eaff;
+}
+
+/* 🚀 Create Post */
+.create-post-card {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 .post-type-toggle {
   display: flex;
-  justify-content: center;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
 .post-type-toggle button {
-  background-color: #ddd;
+  flex: 1;
+  padding: 10px;
   border: none;
-  padding: 8px 12px;
-  font-size: 16px;
-  font-weight: bold;
+  border-radius: 8px;
+  font-size: 14px;
   cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
-  min-width: 80px;
+  transition: all 0.3s ease;
 }
 
 .post-type-toggle button.active {
-  background-color: #007bff;
+  background: #007bff;
   color: white;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* ✅ User Posts Section */
+.post-type-toggle button:not(.active):hover {
+  background: #ddd;
+}
+
+/* 🚀 Post Cards */
 .user-posts-section {
-  margin-top: 30px;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  margin-top: 20px;
 }
 
-/* ✅ Post Cards */
 .post-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.2);
   padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
-  text-align: left;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  margin-bottom: 15px;
   position: relative;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
 }
 
-/* ✅ Ensures consistent spacing between posts */
-.user-posts-section .post-card {
-  margin-bottom: 40px;
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 234, 255, 0.6);
 }
 
+/* 🚀 Post Title */
 .post-card h4 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px;
+  margin-top: 0;
+  color: black;
 }
 
-.post-card p {
-  font-size: 14px;
-  color: #555;
-}
-
-.post-image {
-  width: 100%;
-  max-height: 300px;
-  object-fit: contain;
-  border-radius: 5px;
+/* 🚀 Post Content - Now Black */
+.post-card p,
+.post-content {
+  font-size: 16px;
+  font-weight: normal;
+  color: black !important; /* ✅ Ensures text is black */
   margin-top: 10px;
 }
 
-/* ✅ Edit and Delete Buttons */
+/* 🚀 Post Stats: Likes & Comments (Fixed Color) */
+.post-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding: 8px 15px;
+  background: rgba(0, 0, 0, 0.1); 
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+}
+
+/* 🎨 Like & Comment Text */
+.like-icon, .comment-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: black;
+}
+
+/* 🚀 Post Actions */
 .post-actions {
   display: flex;
   justify-content: flex-end;
@@ -184,131 +208,102 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
-  transition: 0.3s;
-}
-
-.post-actions button:hover {
-  transform: scale(1.1);
 }
 
 .post-actions img {
   width: 20px;
   height: 20px;
+  transition: transform 0.2s;
 }
 
-/* ✅ Responsive Adjustments */
+.post-actions button:hover img {
+  transform: scale(1.2);
+}
+
+/* 🚀 Comments Modal */
+/* 🚀 Comments Modal - Ensure Text is Black */
+.comments-modal {
+  position: absolute;
+  top: var(--modal-top, 50%);
+  left: 50%;
+  transform: translate(-50%, 0);
+  background: rgba(255, 255, 255, 0.9); /* Light background for better contrast */
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  max-width: 400px;
+  width: 90%;
+  z-index: 1000;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(0, 0, 0, 0.3); /* Darker border for contrast */
+  color: black !important; /* ✅ Ensures all text inside is black */
+}
+
+/* 🚀 Comment Text - Ensure Black */
+.comments-modal .modal-content {
+  color: black !important; /* ✅ Makes all text inside black */
+}
+
+.comments-modal .comment {
+  color: black !important; /* ✅ Ensures comment text is black */
+  background: rgba(0, 0, 0, 0.1); /* Light gray background for better readability */
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+}
+
+/* 🚀 Responsive Design */
 @media (max-width: 768px) {
   .dashboard-container {
-    width: 90%;
-  }
-
-  .post-type-toggle {
-    flex-direction: row;
-    justify-content: center;
+      padding: 15px;
   }
 
   .post-card {
-    max-width: 100%;
+      padding: 12px;
+  }
+
+  .post-type-toggle {
+      flex-direction: column;
+  }
+
+  .profile-info {
+      flex-direction: column;
+      text-align: center;
   }
 }
-
-/* ✅ Improved Image Preview Styling */
-.preview-image {
-  width: 100%;
-  max-height: 300px;
-  object-fit: contain;
-  border-radius: 5px;
-  margin-top: 10px;
-  display: block;
-}
-
-/* ✅ Adjusts Specifically for Portrait Images */
-@media (min-aspect-ratio: 3/4) {
-  .preview-image {
-    width: 100%;
-    height: auto;
-  }
-}
-
-@media (max-aspect-ratio: 3/4) {
-  .preview-image {
-    width: auto;
-    height: 300px;
-  }
-}
-
-/* ✅ AI Suggestions Box */
-.ai-suggestions {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  margin-top: 20px;
-}
-
-.error-text {
-  color: red;
-  font-weight: bold;
-}
-
-.suggestions-list {
-  margin-top: 15px;
-  padding: 0;
-  list-style: none;
-}
-
-.suggestions-list li {
-  background: #ffffff;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.post-image {
-  opacity: 0; /* Hide image until loaded */
-  transition: opacity 0.3s ease-in-out; /* Smooth transition */
-}
-
-.post-image.loaded {
-  opacity: 1; /* Show image when loaded */
-}
-
-/* ✅ Comments Modal Styling */
-.comments-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(17, 37, 150, 0.6);
+/* 🚀 Centered Image Preview */
+.image-preview-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 400px;
-  max-width: 90%;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto; /* Centers horizontally */
   text-align: center;
-  position: relative;
 }
 
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: transparent;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
+/* 🚀 Image Preview - Maintain Aspect Ratio */
+.image-preview {
+  display: block;
+  max-width: 300px;
+  max-height: 500px;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* Ensures no cropping */
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+  border: black 1px solid;
 }
 
-.comment {
-  padding: 8px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
+/* 🚀 Post Image - Maintain Aspect Ratio */
+.post-image {
+  display: block;
+  max-width: 100%;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* Ensures no cropping */
+  border-radius: 10px;
+  align-items: center;
 }
