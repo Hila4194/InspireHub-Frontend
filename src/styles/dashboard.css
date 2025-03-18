@@ -1,4 +1,4 @@
-/* 🎨 Global Styling */
+/* Global Styling */
 body {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #0f2027, #203a43, #3c83a1);
@@ -7,7 +7,7 @@ body {
   padding: 0;
 }
 
-/* 🚀 Dashboard Container - Glassmorphism Effect */
+/* Dashboard Container - Glassmorphism Effect */
 .dashboard-container {
   max-width: 900px;
   margin: 40px auto;
@@ -21,7 +21,7 @@ body {
   color: white !important;
 }
 
-/* 🚀 Header */
+/* Header */
 .dashboard-header {
   display: flex;
   align-items: center;
@@ -51,7 +51,7 @@ body {
   color: #ddd;
 }
 
-/* 🚀 Buttons - Neon Hover Effect */
+/* Buttons - Neon Hover Effect */
 .btn {
   padding: 10px 15px;
   border: none;
@@ -83,7 +83,7 @@ body {
   box-shadow: 0 0 15px rgba(255, 75, 43, 0.7);
 }
 
-/* 🚀 AI Suggestions - Stylish Info Box */
+/* AI Suggestions - Stylish Info Box */
 .ai-suggestions {
   background: rgba(255, 255, 255, 0.2);
   padding: 15px;
@@ -100,7 +100,7 @@ body {
   border-left: 5px solid #00eaff;
 }
 
-/* 🚀 Create Post */
+/* Create Post */
 .create-post-card {
   background: rgba(255, 255, 255, 0.15);
   padding: 20px;
@@ -136,7 +136,7 @@ body {
   background: #ddd;
 }
 
-/* 🚀 Post Cards */
+/* Post Cards */
 .user-posts-section {
   margin-top: 20px;
 }
@@ -156,22 +156,22 @@ body {
   box-shadow: 0 12px 24px rgba(0, 234, 255, 0.6);
 }
 
-/* 🚀 Post Title */
+/* Post Title */
 .post-card h4 {
   margin-top: 0;
   color: black;
 }
 
-/* 🚀 Post Content - Now Black */
+/* Post Content */
 .post-card p,
 .post-content {
   font-size: 16px;
   font-weight: normal;
-  color: black !important; /* ✅ Ensures text is black */
+  color: black !important;
   margin-top: 10px;
 }
 
-/* 🚀 Post Stats: Likes & Comments (Fixed Color) */
+/* Post Stats: Likes & Comments */
 .post-stats {
   display: flex;
   justify-content: space-between;
@@ -185,7 +185,7 @@ body {
   color: black;
 }
 
-/* 🎨 Like & Comment Text */
+/* Like & Comment Text */
 .like-icon, .comment-icon {
   display: flex;
   align-items: center;
@@ -196,7 +196,7 @@ body {
   color: black;
 }
 
-/* 🚀 Post Actions */
+/* Post Actions */
 .post-actions {
   display: flex;
   justify-content: flex-end;
@@ -220,7 +220,7 @@ body {
   transform: scale(1.2);
 }
 
-/* 🚀 Comments Modal */
+/* Comments Modal */
 .comments-modal {
   position: absolute;
   top: var(--modal-top, 50%);
@@ -230,37 +230,37 @@ body {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  max-width: fit-content; /* ✅ Adjust width dynamically */
-  width: auto; /* ✅ Allow it to resize dynamically */
-  min-width: 250px; /* ✅ Ensure it doesn't get too small */
+  max-width: fit-content;
+  width: auto;
+  min-width: 250px;
   z-index: 1000;
   backdrop-filter: blur(15px);
   border: 1px solid rgba(0, 0, 0, 0.3);
   color: black !important;
-  white-space: nowrap; /* ✅ Prevents text from breaking into multiple lines */
+  white-space: nowrap;
   overflow: hidden;
 }
 
 /* Comments - Username Styling */
 .comment strong {
-  color: #007bff !important; /* Change username color to blue */
+  color: #007bff !important;
   font-weight: bold;
 }
 
-/* 🚀 Comment Text - Ensure Black */
+/* Comment Text */
 .comments-modal .modal-content {
-  color: black !important; /* ✅ Makes all text inside black */
+  color: black !important;
 }
 
 .comments-modal .comment {
-  color: black !important; /* ✅ Ensures comment text is black */
-  background: rgba(0, 0, 0, 0.1); /* Light gray background for better readability */
+  color: black !important;
+  background: rgba(0, 0, 0, 0.1);
   padding: 8px;
   border-radius: 6px;
   margin-bottom: 5px;
 }
 
-/* 🚀 Responsive Design */
+/* Responsive Design */
 @media (max-width: 768px) {
   .dashboard-container {
       padding: 15px;
@@ -280,18 +280,18 @@ body {
   }
 }
 
-/* 🚀 Comments Header - Centers the Close Button */
+/* Comments Header */
 .comments-header {
   position: relative;
   text-align: center;
   width: 100%;
-  margin-bottom: 10px; /* ✅ Creates spacing between the close button and the title */
+  margin-bottom: 10px;
 }
 
-/* 🚀 Scoped Close Button - Only for Dashboard Comments Modal */
+/* Scoped Close Button - Only for Dashboard Comments Modal */
 .comments-modal .close-btn {
   position: absolute;
-  top: -15px; /* ✅ Stays above the title */
+  top: -15px;
   left: 50%;
   right: 50%;
   background: none;
@@ -299,28 +299,28 @@ body {
   font-size: 22px;
   font-weight: bold;
   cursor: pointer;
-  color: #007bff !important; /* ✅ Ensures it's blue */
-  transition: color 0.2s ease-in-out; /* ✅ Only color changes on hover, no movement */
+  color: #007bff !important;
+  transition: color 0.2s ease-in-out;
 }
 
-/* 🚀 Centered Image Preview */
+/* Centered Image Preview */
 .image-preview-container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin: 0 auto; /* Centers horizontally */
+  margin: 0 auto;
   text-align: center;
 }
 
-/* 🚀 Image Preview - Maintain Aspect Ratio */
+/* Image Preview - Maintain Aspect Ratio */
 .image-preview {
   display: block;
   max-width: 300px;
   max-height: 500px;
   width: auto;
   height: auto;
-  object-fit: contain; /* Ensures no cropping */
+  object-fit: contain;
   border-radius: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -328,39 +328,39 @@ body {
   border: black 1px solid;
 }
 
-/* 🚀 Post Image - Maintain Aspect Ratio */
+/* Post Image - Maintain Aspect Ratio */
 .post-image {
   display: block;
   max-width: 100%;
   max-height: 300px;
   width: auto;
   height: auto;
-  object-fit: contain; /* Ensures no cropping */
+  object-fit: contain;
   border-radius: 10px;
   align-items: center;
 }
 
-/* 🚀 Fix Image Preview in Edit Mode */
+/* Fix Image Preview in Edit Mode */
 .edit-image-preview {
-  max-width: 200%; /* ✅ Ensures the image doesn't exceed the card width */
-  max-height: 350px; /* ✅ Keeps image height manageable */
+  max-width: 200%;
+  max-height: 350px;
   width: auto;
   height: auto;
-  object-fit: contain; /* ✅ Maintains aspect ratio without distortion */
+  object-fit: contain;
   border-radius: 10px;
   display: block;
-  margin: 10px auto; /* ✅ Centers the image inside the card */
+  margin: 10px auto;
 }
 
-/* 🚀 Center and Style Save & Cancel Buttons */
+/* Center and Style Save & Cancel Buttons */
 .edit-buttons {
   display: flex;
-  justify-content: center; /* ✅ Centers the buttons */
-  gap: 10px; /* ✅ Adds space between them */
+  justify-content: center;
+  gap: 10px;
   margin-top: 10px;
 }
 
-/* 🚀 Match Generate Button Style */
+/* Match Generate Button Style */
 .edit-buttons button {
   padding: 10px 15px;
   border: none;
@@ -369,11 +369,11 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: bold;
-  width: 120px; /* ✅ Ensures consistent size */
+  width: 120px;
   text-align: center;
 }
 
-/* 🚀 Save Button - Blue (Like Generate) */
+/* Save Button */
 .save-btn {
   background: linear-gradient(to right, #00c6ff, #0072ff);
   color: white;
@@ -384,7 +384,7 @@ body {
   box-shadow: 0 0 15px rgba(0, 234, 255, 0.7);
 }
 
-/* 🚀 Cancel Button - Gray */
+/* Cancel Button */
 .cancel-btn {
   background: linear-gradient(to right, #00c6ff, #0072ff);
   color: white;;
@@ -395,14 +395,14 @@ body {
   box-shadow: 0 0 15px rgba(0, 234, 255, 0.7);
 }
 
-/* 🚀 Edit Post Form - Ensures Clean Layout */
+/* Edit Post Form */
 .edit-post-form {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* ✅ Adds spacing between elements */
+  gap: 15px;
 }
 
-/* 🚀 Input & Textarea Fields */
+/* Input & Textarea Fields */
 .edit-post-form label {
   font-weight: bold;
   margin-bottom: 5px;
@@ -418,21 +418,21 @@ body {
   font-size: 16px;
 }
 
-/* 🚀 File Input (For Image Posts) */
+/* File Input (For Image Posts) */
 .edit-post-form input[type="file"] {
   padding: 5px;
 }
 
-/* 🚀 Centered Notification Styling */
+/* Centered Notification Styling */
 .notification {
-  margin: 10px auto; /* ✅ Centers horizontally */
+  margin: 10px auto;
   padding: 10px 15px;
   border-radius: 6px;
   text-align: center;
   font-weight: bold;
   font-size: 14px;
-  width: fit-content; /* ✅ Adjusts width dynamically */
-  max-width: 80%; /* ✅ Prevents it from being too wide */
+  width: fit-content;
+  max-width: 80%;
 }
 
 /* ✅ Success Message */

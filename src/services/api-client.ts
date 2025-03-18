@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 
 export { CanceledError };
 
-// ✅ Set base URL for API requests
+// Set base URL for API requests
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
@@ -11,7 +11,7 @@ const apiClient = axios.create({
   },
 });
 
-// ✅ Request Interceptor - Attach Authorization Header & Handle FormData
+// Request Interceptor - Attach Authorization Header & Handle FormData
 apiClient.interceptors.request.use((config) => {
   const storedUser = localStorage.getItem("user");
   if (storedUser) {
@@ -21,7 +21,7 @@ apiClient.interceptors.request.use((config) => {
     }
   }
 
-  // ✅ Allow FormData to set Content-Type automatically
+  // Allow FormData to set Content-Type automatically
   if (config.data instanceof FormData) {
     delete config.headers["Content-Type"]; // Let the browser set "multipart/form-data"
   }
@@ -29,13 +29,13 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ Response Interceptor - Auto Refresh Token on 401
+// Response Interceptor - Auto Refresh Token on 401
 apiClient.interceptors.response.use(
   (response) => response, // Pass successful responses through
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
-    // 🔄 If unauthorized (401) and we haven't retried yet, refresh token
+    // If unauthorized (401) and we haven't retried yet, refresh token
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -52,11 +52,11 @@ apiClient.interceptors.response.use(
 
         const newAccessToken = refreshResponse.data.accessToken;
 
-        // ✅ Update user data in localStorage
+        // Update user data in localStorage
         const updatedUser = { ...user, accessToken: newAccessToken };
         localStorage.setItem("user", JSON.stringify(updatedUser));
 
-        // ✅ Retry original request with new token
+        // Retry original request with new token
         originalRequest.headers = { ...originalRequest.headers, Authorization: `JWT ${newAccessToken}` };
         return axios(originalRequest);
       } catch (refreshError) {

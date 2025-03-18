@@ -5,6 +5,7 @@ import apiClient from "../services/api-client";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import "../styles/login.css";
 
+// This is the LoginPage component that handles user login and Google Sign-in functionality.
 const LoginPage = () => {
     const authContext = useContext(AuthContext);
     if (!authContext) {
@@ -17,7 +18,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    // ✅ Handle Standard Login
+    // Handle Standard Login
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -36,7 +37,7 @@ const LoginPage = () => {
         }
     };
 
-    // ✅ Google Sign-in API Call
+    // Google Sign-in API Call
     const googleSignin = async (credentialResponse: CredentialResponse) => {
         try {
             console.log("Google Signin!", credentialResponse);
@@ -56,7 +57,7 @@ const LoginPage = () => {
         }
     };
 
-    // ✅ Google Sign-in Success Handler
+    // Google Sign-in Success Handler
     const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
         console.log("✅ Google login successful!", credentialResponse);
         try {

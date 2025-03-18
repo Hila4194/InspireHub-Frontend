@@ -11,6 +11,7 @@ export interface Post {
   comments: { _id: string; content: string; sender: string }[];
 }
 
+// This hook fetches posts from the API and manages the state of posts, error, and loading status
 const usePosts = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);

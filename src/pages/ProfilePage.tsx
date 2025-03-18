@@ -7,7 +7,7 @@ import { User } from "../context/AuthContext";
 import avatar from "../assets/default-avatar.png";
 import { z } from "zod";
 
-// ✅ Zod Schema for Username Validation (Email & Password Locked)
+// Zod Schema for Username Validation (Email & Password Locked)
 const usernameSchema = z.object({
   username: z
     .string()
@@ -17,6 +17,7 @@ const usernameSchema = z.object({
     }),
 });
 
+// This component handles the user's profile page, allowing them to update their username and profile picture
 const ProfilePage: React.FC = () => {
     const { user, setUser, logout } = useAuth();
     const [username, setUsername] = useState(user?.username || "");
@@ -38,7 +39,7 @@ const ProfilePage: React.FC = () => {
                 const latestUser = response.data;
                 setUser(latestUser);
     
-                // ✅ Ensure profile picture updates correctly
+                // Ensure profile picture updates correctly
                 if (latestUser.profilePicture) {
                     if (latestUser.profilePicture.startsWith("http")) {
                         setPreviewImage(latestUser.profilePicture);
@@ -46,7 +47,7 @@ const ProfilePage: React.FC = () => {
                         setPreviewImage(`${apiClient.defaults.baseURL}${latestUser.profilePicture}`);
                     }
                 } else {
-                    setPreviewImage(avatar); // ✅ Fallback to default avatar
+                    setPreviewImage(avatar); // Fallback to default avatar
                 }
             } catch (error) {
                 console.error("❌ Failed to fetch latest user data:", error);
@@ -54,8 +55,9 @@ const ProfilePage: React.FC = () => {
         };
     
         fetchUser();
-    }, [user?._id]); // ✅ Re-run only when the user's ID changes, avoiding unnecessary API calls  
+    }, [user?._id]); // Re-run only when the user's ID changes, avoiding unnecessary API calls  
 
+    // Handle file input change for profile picture
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -64,7 +66,7 @@ const ProfilePage: React.FC = () => {
         }
     };
 
-    // ✅ Validate the username only (email & password are locked)
+    // Validate the username only (email & password are locked)
     const validateUsername = () => {
         const result = usernameSchema.safeParse({ username });
         if (!result.success) {
@@ -79,6 +81,7 @@ const ProfilePage: React.FC = () => {
         return true;
     };
 
+    // Handle profile update
     const handleUpdate = async () => {
         if (!user) return;
 
@@ -111,7 +114,7 @@ const ProfilePage: React.FC = () => {
             }
 
             setUser(updatedUser);
-            setPreviewImage(updatedUser.profilePicture); // ✅ Ensure updated image is displayed
+            setPreviewImage(updatedUser.profilePicture); // Ensure updated image is displayed
 
         } catch (error) {
             console.error("❌ Error updating profile:", error);

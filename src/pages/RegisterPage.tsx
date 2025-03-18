@@ -126,7 +126,7 @@ const RegisterPage = () => {
     }
   };
 
-  // ✅ Google Sign-in API Call
+  // Google Sign-in API Call
   const googleSignin = async (credentialResponse: CredentialResponse) => {
     try {
       console.log("Google Signin!", credentialResponse);
@@ -146,7 +146,7 @@ const RegisterPage = () => {
     }
   };
 
-  // ✅ Google Sign-in Success Handler
+  // Google Sign-in Success Handler
   const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
     console.log("✅ Google login successful!", credentialResponse);
     try {
@@ -162,6 +162,7 @@ const RegisterPage = () => {
     }
   };
 
+  // Google Sign-in Error Handler
   const onGoogleLoginError = () => {
     console.error("🛑 Google login failed!");
   };

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo.webp";
 import "../styles/home.css";
 
+// This is the HomePage component that serves as the landing page for the application
 const HomePage = () => {
   return (
     <div className="container text-center mt-5">

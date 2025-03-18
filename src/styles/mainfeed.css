@@ -1,4 +1,4 @@
-/* ✅ Center the main feed */
+/* Center the main feed */
 .main-feed-container {
   max-width: 1000px;
   margin: auto;
@@ -6,7 +6,7 @@
   text-align: center;
 }
 
-/* ✅ Title Styling */
+/* Title Styling */
 .main-feed-title {
   font-size: 28px;
   font-weight: bold;
@@ -14,14 +14,14 @@
   color: white;
 }
 
-/* ✅ Grid layout for posts */
+/* Grid layout for posts */
 .post-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 25px;
 }
 
-/* ✅ Post Card Styling */
+/* Post Card Styling */
 .post-card {
   background-color: white;
   color: black;
@@ -39,14 +39,14 @@
   transform: scale(1.03);
 }
 
-/* ✅ Post Title */
+/* Post Title */
 .post-title {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 12px;
 }
 
-/* ✅ Post Header (User Info) */
+/* Post Header (User Info) */
 .post-header {
   display: flex;
   align-items: center;
@@ -57,7 +57,7 @@
   border-radius: 8px;
 }
 
-/* ✅ Profile Picture */
+/* Profile Picture */
 .post-profile-pic {
   width: 45px;
   height: 45px;
@@ -66,7 +66,7 @@
   border: 2px solid #0b0127;
 }
 
-/* ✅ Username Styling */
+/* Username Styling */
 .post-owner {
   font-size: 16px;
   font-weight: bold;
@@ -74,7 +74,7 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-/* ✅ Post Image */
+/* Post Image */
 .post-image {
   width: 100%;
   max-height: 400px;
@@ -83,7 +83,7 @@
   margin-top: 10px;
 }
 
-/* ✅ Post Content */
+/* Post Content */
 .post-content {
   font-size: 20px;
   color: #ddd;
@@ -92,7 +92,7 @@
   font-weight: 500;
 }
 
-/* ✅ Quote Box with Eye-Catching Animation */
+/* Quote Box with Eye-Catching Animation */
 @keyframes glowingQuote {
   0% { transform: scale(1); opacity: 0.8; text-shadow: none; }
   50% { transform: scale(1.05); opacity: 1; text-shadow: 0 0 20px rgba(0, 234, 255, 0.8); }
@@ -110,7 +110,7 @@
   animation: glowingQuote 3s ease-in-out infinite alternate;
 }
 
-/* ✅ Quote Text */
+/* Quote Text */
 .quote-text {
   font-size: 22px;
   font-weight: bold;
@@ -118,7 +118,7 @@
   transition: all 0.3s ease;
 }
 
-/* ✅ Quote Author */
+/* Quote Author */
 .quote-author {
   font-size: 18px;
   font-weight: bold;
@@ -126,7 +126,7 @@
   margin-top: 5px;
 }
 
-/* ✅ Ensure post image is visible */
+/* Ensure post image is visible */
 .post-image {
   max-width: 100%;
   max-height: 400px;
@@ -139,7 +139,7 @@
   opacity: 1;
 }
 
-/* ✅ Comments Popup Styling */
+/* Comments Popup Styling */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -210,7 +210,7 @@
   color: white;
 }
 
-/* ✅ Responsive Adjustments */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .post-grid {
     grid-template-columns: 1fr;
@@ -221,7 +221,7 @@
   }
 }
 
-/* ✅ Pagination Buttons */
+/* Pagination Buttons */
 .pagination-buttons {
   display: flex;
   justify-content: center;
@@ -261,7 +261,7 @@
   opacity: 0.5;
 }
 
-/* ✅ Page Number Styling */
+/* Page Number Styling */
 .page-number {
   font-weight: bold;
   font-size: 16px;
@@ -276,7 +276,7 @@
   color: black;
 }
 
-/* ✅ Responsive Adjustments */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .pagination-buttons {
     gap: 8px;

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/navbar.css";
 
+// This is the Navbar component that displays the navigation bar at the top of the page
 const Navbar = () => {
   const { user } = useAuth();
 

@@ -23,6 +23,7 @@ interface Post {
 
 const PAGE_SIZE = 4;
 
+// This component fetches and displays a list of posts, allowing users to like and comment on them
 const MainFeedPage = () => {
   const authContext = useContext(AuthContext);
   if (!authContext) throw new Error("AuthContext is null");
@@ -47,7 +48,7 @@ const MainFeedPage = () => {
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "");
         const imageBaseUrl = apiBaseUrl.replace("/api", "");
 
-        // ✅ Ensure correct profile picture & post image formatting
+        // Ensure correct profile picture & post image formatting
         const formattedPosts = posts.map((post: Post) => ({
           ...post,
           imageUrl: post.imageUrl?.startsWith("/uploads/")
@@ -57,7 +58,7 @@ const MainFeedPage = () => {
             ...post.sender,
             profilePicture: post.sender.profilePicture?.startsWith("/uploads/")
               ? `${imageBaseUrl}${post.sender.profilePicture}`
-              : post.sender.profilePicture || avatar, // ✅ Use default avatar
+              : post.sender.profilePicture || avatar, // Use default avatar
           },
         }));
 
@@ -79,6 +80,7 @@ const MainFeedPage = () => {
     fetchContent();
   }, [page, quoteFetched]);
 
+  // Handle Like/Unlike Post
   const handleLike = async (postId: string) => {
     if (!user) {
       console.error("❌ User not logged in.");
@@ -104,18 +106,18 @@ const MainFeedPage = () => {
     }
   };
 
-  // ✅ Open Comments Popup
+  // Open Comments Popup
   const openCommentsPopup = (post: Post) => {
     setSelectedPost(post);
   };
 
-  // ✅ Close Comments Popup
+  // Close Comments Popup
   const closeCommentsPopup = () => {
     setSelectedPost(null);
     setNewComment("");
   };
 
-  // ✅ Handle Adding a Comment (Closes popup after posting)
+  // Handle Adding a Comment (Closes popup after posting)
   const handleAddComment = async () => {
     if (!selectedPost || !user) return;
     if (!newComment.trim()) return alert("Please enter a comment!");
@@ -136,7 +138,7 @@ const MainFeedPage = () => {
       ));
 
       setNewComment("");
-      closeCommentsPopup(); // ✅ Close popup after posting
+      closeCommentsPopup(); // Close popup after posting
     } catch (error) {
       console.error("❌ Error adding comment:", error);
     }

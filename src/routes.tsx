@@ -7,6 +7,7 @@ import RegisterPage from "./pages/RegisterPage";
 import Homepage from "./pages/HomePage";
 import MainFeedPage from "./pages/MainFeedPage";
 
+// This is the main App component that defines the routing for the application.
 const App = () => {
   const { user } = useAuth();
   return (

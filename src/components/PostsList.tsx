@@ -1,11 +1,12 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import usePosts from "../hooks/usePosts";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../services/api-client";
 
 const PAGE_SIZE = 4;
 
-const PostsList: FC = () => {
+// This component fetches and displays a list of posts, allowing users to edit, delete, and like them
+const PostsList = () => {
   const { posts, setPosts, isLoading, error } = usePosts();
   const { user } = useAuth();
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
@@ -15,10 +16,9 @@ const PostsList: FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  // ✅ Load More Posts on Scroll
+  // Load More Posts
   const handleScroll = () => {
     if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100 && hasMore && !loadingMore) {
-      console.log("🔽 Scroll detected, loading more posts...");
       loadMorePosts();
     }
   };
@@ -28,13 +28,12 @@ const PostsList: FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasMore, loadingMore]);
 
-// ✅ Fetch More Posts with Pagination
+// Fetch More Posts with Pagination
 const loadMorePosts = async () => {
   if (!hasMore || loadingMore) return;
   setLoadingMore(true);
 
   try {
-    console.log(`📡 Fetching more posts... (skip=${pageRef.current * PAGE_SIZE})`);
     const postResponse = await apiClient.get(`/posts?limit=${PAGE_SIZE}&skip=${pageRef.current * PAGE_SIZE}`);
     const newPosts = postResponse.data;
 
@@ -49,7 +48,7 @@ const loadMorePosts = async () => {
   }
 };
 
-  // ✅ DELETE Post
+  // DELETE Post
   const deletePost = async (postId: string) => {
     try {
       await apiClient.delete(`/posts/${postId}`, {
@@ -61,13 +60,14 @@ const loadMorePosts = async () => {
     }
   };
 
-  // ✅ EDIT Post
+  // EDIT Post
   const editPost = (postId: string, title: string, content: string) => {
     setEditingPostId(postId);
     setEditedTitle(title);
     setEditedContent(content);
   };
 
+  // SAVE Edited Post
   const savePost = async (postId: string) => {
     try {
       await apiClient.put(
@@ -86,7 +86,7 @@ const loadMorePosts = async () => {
     }
   };
 
-  // ✅ LIKE Post
+  // LIKE Post
   const likePost = async (postId: string) => {
     try {
       await apiClient.post(
@@ -109,7 +109,7 @@ const loadMorePosts = async () => {
       ) : (
         posts.map((post) => (
           <div key={post._id} className="post-card">
-            {/* ✅ Show User Profile Picture */}
+            {/* Show User Profile Picture */}
             <div className="post-header">
               <img src={user?.profilePicture} alt="Profile" className="profile-pic" />
               <span>{user?.username}</span>
@@ -137,9 +137,9 @@ const loadMorePosts = async () => {
                 <p>{post.content}</p>
                 <p>❤️ {post.likes} Likes</p>
 
-                {/* ✅ Action Buttons (Edit, Delete, Like) */}
+                {/* Action Buttons (Edit, Delete, Like) */}
                 <div className="post-actions">
-                  {/* ✅ Edit & Delete only if user is the owner */}
+                  {/* Edit & Delete only if user is the owner */}
                   {post.sender === user?._id && (
                     <>
                       <button onClick={() => editPost(post._id, post.title, post.content)} className="btn btn-warning">
@@ -151,7 +151,7 @@ const loadMorePosts = async () => {
                     </>
                   )}
 
-                  {/* ✅ Like Post */}
+                  {/* Like Post */}
                   <button onClick={() => likePost(post._id)} className="btn btn-primary">
                     ❤️ Like
                   </button>
