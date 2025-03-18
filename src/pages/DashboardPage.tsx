@@ -271,7 +271,7 @@ const Dashboard = () => {
                             onError={() => setProfileImage(avatar)}
                         />
                     )}
-                    <h3>Welcome, {user?.username || "Guest"}!</h3>
+                    <h3>Welcome, {user?.username ? user.username : "User"}!</h3>
                 </div>
                 <button onClick={handleLogout} className="btn btn-danger">Logout</button>
             </div>

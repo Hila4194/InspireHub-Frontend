@@ -30,25 +30,31 @@ const ProfilePage: React.FC = () => {
         const fetchUser = async () => {
             try {
                 if (!user) return;
+    
                 const response = await apiClient.get(`/auth/get-user/${user?._id}`, {
                     headers: { Authorization: `JWT ${user.accessToken}` },
                 });
-
+    
                 const latestUser = response.data;
                 setUser(latestUser);
-
-                if (latestUser.profilePicture && latestUser.profilePicture.startsWith("http")) {
-                    setPreviewImage(latestUser.profilePicture);
+    
+                // ✅ Ensure profile picture updates correctly
+                if (latestUser.profilePicture) {
+                    if (latestUser.profilePicture.startsWith("http")) {
+                        setPreviewImage(latestUser.profilePicture);
+                    } else {
+                        setPreviewImage(`${apiClient.defaults.baseURL}${latestUser.profilePicture}`);
+                    }
                 } else {
-                    setPreviewImage(`${apiClient.defaults.baseURL}${latestUser.profilePicture}`);
+                    setPreviewImage(avatar); // ✅ Fallback to default avatar
                 }
             } catch (error) {
                 console.error("❌ Failed to fetch latest user data:", error);
             }
         };
-
+    
         fetchUser();
-    }, [user, setUser]);
+    }, [user?._id]); // ✅ Re-run only when the user's ID changes, avoiding unnecessary API calls  
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -105,6 +111,8 @@ const ProfilePage: React.FC = () => {
             }
 
             setUser(updatedUser);
+            setPreviewImage(updatedUser.profilePicture); // ✅ Ensure updated image is displayed
+
         } catch (error) {
             console.error("❌ Error updating profile:", error);
             setMessage("❌ Failed to update profile.");

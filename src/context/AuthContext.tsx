@@ -130,7 +130,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     try {
         const res = await apiClient.put(`/auth/update-profile/${user._id}`, updatedData, {
-            headers: { Authorization: `JWT ${user.accessToken}` }, // ✅ No need to manually set Content-Type
+            headers: { Authorization: `JWT ${user.accessToken}` },
         });
 
         const updatedUser: User = res.data;
