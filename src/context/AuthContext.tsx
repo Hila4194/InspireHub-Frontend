@@ -4,7 +4,7 @@ import { AxiosError } from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// ✅ User Interface
+// User Interface
 export interface User {
   _id: string;
   username: string;
@@ -14,10 +14,10 @@ export interface User {
   refreshToken: string;
 }
 
-// ✅ AuthContext Type
+// AuthContext Type
 interface AuthContextType {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>; // 🔹 Allow updates to user state
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   login: (username: string, password: string) => Promise<void>;
   register: (formData: FormData) => Promise<void>;
   logout: () => void;
@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
 
-      // ✅ Ensure profile picture remains correct
+      // Ensure profile picture remains correct
         if (parsedUser.profilePicture) {
             if (parsedUser.profilePicture.includes("googleusercontent.com")) {
                 console.log("✅ Google Profile Picture Detected:", parsedUser.profilePicture);
@@ -51,20 +51,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 parsedUser.profilePicture = `${API_BASE_URL}${parsedUser.profilePicture}`;
             }
         } else {
-            parsedUser.profilePicture = "/default-avatar.png"; // ✅ Default avatar fallback
+            parsedUser.profilePicture = "/default-avatar.png"; // Default avatar fallback
         }
 
       setUser(parsedUser);
     }
   }, []);
 
-  // 🔵 **Login Function**
+  // Login Function
   const login = async (username: string, password: string) => {
     try {
       const response = await apiClient.post<User>("/auth/login", { username, password });
       const userData = response.data;
 
-      // ✅ Ensure the profile picture URL is stored correctly
+      // Ensure the profile picture URL is stored correctly
       if (userData.profilePicture) {
         if (userData.profilePicture.includes("googleusercontent.com")) {
             console.log("🔍 Debug: Using Google Profile Picture:", userData.profilePicture);
@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // 🔄 **Refresh Token Function**
+  // Refresh Token Function
   const refreshAccessToken = async (): Promise<string | null> => {
     try {
       if (!user?.refreshToken) {
@@ -108,7 +108,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // 🟢 **Register Function**
+  // Register Function
   const register = async (formData: FormData) => {
     try {
       const response = await apiClient.post("/auth/register", formData, {
@@ -116,7 +116,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
 
       console.log("✅ Registration successful:", response.data);
-      window.location.href = "/login"; // 🔄 Redirect to login after success
+      window.location.href = "/login"; // Redirect to login after success
     } catch (error) {
       const axiosError = error as AxiosError;
       console.error("❌ Registration failed:", axiosError.response?.data || axiosError);
@@ -124,7 +124,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // ✏ **Update Profile Function**
+  // Update Profile Function
   const updateProfile = async (updatedData: FormData): Promise<void> => {
     if (!user) return;
 
@@ -135,7 +135,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
         const updatedUser: User = res.data;
 
-        // ✅ Ensure profile picture URL is absolute
+        // Ensure profile picture URL is absolute
         if (updatedUser.profilePicture && !updatedUser.profilePicture.startsWith("http")) {
             updatedUser.profilePicture = `${API_BASE_URL}${updatedUser.profilePicture}`;
         }
@@ -150,7 +150,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 };
 
-  // 🔴 **Logout Function**
+  // Logout Function
   const logout = () => {
     localStorage.removeItem("user");
     setUser(null);

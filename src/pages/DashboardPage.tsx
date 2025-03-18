@@ -9,6 +9,10 @@ import deleteIcon from "../assets/delete.png";
 import commentIcon from "../assets/comment.png";
 import avatar from "../assets/default-avatar.png";
 
+// This is the Dashboard component that displays the user's dashboard with their posts and allows them to create, edit, and delete posts
+// It also provides AI suggestions for post ideas based on user input
+// and includes a comments section for each post
+// It uses the AuthContext to manage user authentication and profile information
 const Dashboard = () => {
     const authContext = useContext(AuthContext);
     if (!authContext) throw new Error("AuthContext is null");
@@ -60,7 +64,7 @@ const Dashboard = () => {
             return;
         }
     
-        if (!user._id) return; // ✅ Prevents errors if `user` is not fully loaded
+        if (!user._id) return; // Prevents errors if `user` is not fully loaded
     
         console.log("🔍 Debug: User Profile Picture from Backend:", user.profilePicture);
     
@@ -68,25 +72,25 @@ const Dashboard = () => {
             try {
                 const posts = await fetchUserPosts(user._id);
     
-                // ✅ Keep `VITE_API_BASE_URL` for API calls, but remove `/api` for images
+                // Keep `VITE_API_BASE_URL` for API calls, but remove `/api` for images
                 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, ""); // Keep `/api` for API calls
-                const imageBaseUrl = apiBaseUrl.replace("/api", ""); // ✅ Remove `/api` for images
+                const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
         
-                // ✅ Ensure post images are correctly formatted
+                // Ensure post images are correctly formatted
                 const formattedPosts = posts.map((post: Post) => ({
                     ...post,
-                    likes: post.likes ?? 0, // ✅ Ensure likes is always a number
+                    likes: post.likes ?? 0, // Ensure likes is always a number
                     imageUrl: post.imageUrl?.startsWith("/uploads/")
-                        ? `${imageBaseUrl}${post.imageUrl}` // ✅ Use `imageBaseUrl` (without `/api`)
+                        ? `${imageBaseUrl}${post.imageUrl}` // Use `imageBaseUrl` (without `/api`)
                         : post.imageUrl,
                 }));
         
                 setUserPosts(formattedPosts);
-                fetchAISuggestions(); // ✅ Fetch AI suggestions after posts are set
+                fetchAISuggestions(); // Fetch AI suggestions after posts are set
                 
                 let newProfileImage = avatar; // Default fallback
 
-                // ✅ Ensure the profile image is set correctly
+                // Ensure the profile image is set correctly
                 if (user.profilePicture) {
                     newProfileImage = user.profilePicture.startsWith("/uploads/")
                         ? `${imageBaseUrl}${user.profilePicture}`
@@ -98,13 +102,14 @@ const Dashboard = () => {
                 
             } catch (error) {
                 console.error("❌ Error fetching user posts:", error);
-                setUserPosts([]); // ✅ Prevent crash if fetching fails
+                setUserPosts([]); // Prevent crash if fetching fails
             }
         };
     
         fetchData();
     }, [user]);    
 
+    // Logout Function
     const handleLogout = () => {
         const confirmLogout = window.confirm("Are you sure you want to log out?");
         if (confirmLogout) {
@@ -112,6 +117,7 @@ const Dashboard = () => {
         }
     };
     
+    // Image Upload Handler
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -128,7 +134,7 @@ const Dashboard = () => {
         }
     };
 
-    // ✅ Fetch comments for selected post
+    // Fetch comments for selected post
     const handleFetchComments = async (postId: string) => {
         try {
             const response = await apiClient.get(`/comments/post/${postId}`);
@@ -140,7 +146,7 @@ const Dashboard = () => {
             const post = updatedPosts.find((p) => p._id === postId);
             setSelectedPost(post || null);
     
-            // ✅ Dynamically position modal relative to current scroll
+            // Dynamically position modal relative to current scroll
             setModalTop(window.scrollY + window.innerHeight / 2 - 100);
             
             setShowCommentsPopup(true);
@@ -149,6 +155,7 @@ const Dashboard = () => {
         }
     };    
 
+    // Create Post Handler
     const createPostHandler = async (e: React.FormEvent) => {
         e.preventDefault();
         setNotification(null);
@@ -166,9 +173,9 @@ const Dashboard = () => {
         try {
             const newPost = await createPost({ title, content, image: image || undefined, token: user.accessToken });
     
-            // ✅ Fix: Ensure the image URL is formatted correctly
+            // Ensure the image URL is formatted correctly
             const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "");
-            const imageBaseUrl = apiBaseUrl.replace("/api", ""); // ✅ Remove `/api` for images
+            const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
     
             const formattedPost = {
                 ...newPost,
@@ -177,7 +184,7 @@ const Dashboard = () => {
                     : newPost.imageUrl,
             };
     
-            setUserPosts([formattedPost, ...userPosts]); // ✅ Add new post immediately
+            setUserPosts([formattedPost, ...userPosts]); // Add new post immediately
             setTitle("");
             setContent("");
             setImage(null);
@@ -188,6 +195,7 @@ const Dashboard = () => {
         }
     };
     
+    // Edit Post Handler
     const handleEditClick = (post: Post) => {
         setEditingPostId(post._id);
         setEditedTitle(post.title);
@@ -196,18 +204,19 @@ const Dashboard = () => {
         setPreviewImage(post.imageUrl || null);
     };
     
+    // Update Post Handler
     const handleUpdatePost = async (postId: string) => {
         try {
             const formData = new FormData();
             formData.append("title", editedTitle);
             formData.append("content", editedContent);
-            if (editedImage) formData.append("file", editedImage); // ✅ Upload new image if selected
+            if (editedImage) formData.append("file", editedImage); // Upload new image if selected
     
             const updatedPost = await updatePost(postId, formData);
     
-            // ✅ Fix: Ensure the updated image URL is formatted correctly
+            // Ensure the updated image URL is formatted correctly
             const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "");
-            const imageBaseUrl = apiBaseUrl.replace("/api", ""); // ✅ Remove `/api` for images
+            const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
     
             const formattedUpdatedPost = {
                 ...updatedPost,
@@ -216,15 +225,16 @@ const Dashboard = () => {
                     : updatedPost.imageUrl,
             };
     
-            setUserPosts(userPosts.map((post) => (post._id === postId ? formattedUpdatedPost : post))); // ✅ Update post list immediately
+            setUserPosts(userPosts.map((post) => (post._id === postId ? formattedUpdatedPost : post))); // Update post list immediately
             setEditingPostId(null);
-            setPreviewImage(null); // ✅ Reset preview after saving
+            setPreviewImage(null); // Reset preview after saving
             setPostNotification({ message: "✅ Post updated successfully!", type: "success" });
         } catch {
             setPostNotification({ message: "❌ Failed to update post. Please try again.", type: "error" });
         }
     };    
 
+    // Delete Post Handler
     const handleDeletePost = async (postId: string) => {
         try {
             await deletePost(postId);
@@ -237,14 +247,14 @@ const Dashboard = () => {
 
     // Function to send user input to backend and get AI suggestions
     const fetchAISuggestions = async () => {
-        setSubmitted(true); // ✅ Only now we allow errors to show
+        setSubmitted(true);
     
         if (!userInput.trim()) {
             setError("❌ Please enter some text before requesting AI suggestions.");
             return;
         }
     
-        setError(null); // ✅ Clear error when input is provided
+        setError(null); // Clear error when input is provided
         setLoadingSuggestions(true);
     
         try {
@@ -276,7 +286,7 @@ const Dashboard = () => {
                 <button onClick={handleLogout} className="btn btn-danger">Logout</button>
             </div>
     
-            {/* 🔹 AI-Based Content Suggestions Section */}
+            {/* AI-Based Content Suggestions Section */}
             <div className="ai-suggestions">
                 <h3>🤖 Get AI Post Ideas</h3>
                 <p>Enter a topic or idea below, and AI will suggest post ideas for you.</p>
@@ -317,7 +327,7 @@ const Dashboard = () => {
                 </div>
             )}
     
-            {/* 🔹 Create a New Post */}
+            {/* Create a New Post */}
             <div className="create-post-card">
                 <h3>Create a New Post:</h3>
                 <div className="post-type-toggle">
@@ -346,15 +356,15 @@ const Dashboard = () => {
                 </form>
             </div>
     
-            {/* 🔹 User Posts Section */}
-<div className="user-posts-section">
-    <h3>Your Posts:</h3>
-        {/* ✅ Display success/error messages here */}
-        {postNotification && (
-        <div className={`notification ${postNotification.type}`}>
-            {postNotification.message}
-        </div>
-    )}
+            {/* User Posts Section */}
+                <div className="user-posts-section">
+                    <h3>Your Posts:</h3>
+                        {/* Display success/error messages here */}
+                        {postNotification && (
+                        <div className={`notification ${postNotification.type}`}>
+                        {postNotification.message}
+                    </div>
+            )}
     {userPosts.length > 0 ? (
         userPosts.map((post) => (
             <div key={post._id} className="post-card">
@@ -362,7 +372,6 @@ const Dashboard = () => {
                     <>
                         {/* Edit Post Form */}
                         <div className="edit-post-form">
-                            {/* Title Field */}
                             <label>Title</label>
                             <input 
                                 type="text" 
@@ -392,14 +401,14 @@ const Dashboard = () => {
                                             if (e.target.files && e.target.files[0]) {
                                                 const file = e.target.files[0];
                                                 setEditedImage(file);
-                                                setPreviewImage(URL.createObjectURL(file)); // ✅ Show preview before saving
+                                                setPreviewImage(URL.createObjectURL(file)); // Show preview before saving
                                             }
                                         }} 
                                     />
                                 </>
                             )}
 
-                            {/* ✅ Show preview before saving */}
+                            {/* Show preview before saving */}
                             {previewImage && <img src={previewImage} alt="Preview" className="edit-image-preview" />}
                         </div>
 
@@ -412,8 +421,7 @@ const Dashboard = () => {
                 ) : (
                     <>
                         <h4>{post.title}</h4>
-
-                        {/* ✅ Ensure post images load correctly */}
+                        {/* Ensure post images load correctly */}
                         {post.imageUrl ? (
                             <img 
                                 src={post.imageUrl} 
@@ -422,13 +430,12 @@ const Dashboard = () => {
                                 onLoad={(e) => e.currentTarget.classList.add("loaded")}
                                 onError={(e) => {
                                     console.error("❌ Image failed to load:", e.currentTarget.src);
-                                    e.currentTarget.style.display = "none"; // ✅ Hide broken images
+                                    e.currentTarget.style.display = "none"; // Hide broken images
                                 }}
                             />
                         ) : (
                             <p>{post.content}</p>
                         )}
-
                         <p>❤️ {Array.isArray(post.likes) ? post.likes.length : post.likes ?? 0} Likes</p>
                         <p>💬 {post.comments?.length || 0} Comments</p>
                         <div className="post-actions">
