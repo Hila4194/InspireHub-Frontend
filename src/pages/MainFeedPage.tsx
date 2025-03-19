@@ -20,6 +20,7 @@ interface Post {
   likes: number;
   likedByUser?: boolean;
   comments: { _id: string; content: string; sender: { username: string } }[];
+  createdAt: string;
 }
 
 const PAGE_SIZE = 4;
@@ -151,7 +152,7 @@ const MainFeedPage = () => {
                   ) : (
                     <p className="post-content">{post.content}</p>
                   )}
-
+                  <p className="post-date-box">📅 {new Date(post.createdAt).toLocaleDateString()}</p>
                   <p>❤️ {post.likes} Likes</p>
                   <p>💬 {post.comments.length} Comments</p>
 

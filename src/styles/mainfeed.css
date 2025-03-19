@@ -328,3 +328,16 @@
   background: linear-gradient(to right, #0072ff, #00c6ff);
   box-shadow: 0 0 15px rgba(0, 234, 255, 0.7);
 }
+
+.post-date-box {
+  background-color: #7dd2e4; /* Dark gray background */
+  color: #ffffff; /* White text */
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 4px;
+  text-align: center;
+  font-weight: bold;
+  width: fit-content;
+}
