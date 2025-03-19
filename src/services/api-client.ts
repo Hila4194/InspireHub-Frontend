@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 export { CanceledError };
 
 const backend_url = import.meta.env.VITE_API_BASE_URL;
+console.log("url: " + backend_url);
 
 // Set base URL for API requests
 const apiClient = axios.create({
