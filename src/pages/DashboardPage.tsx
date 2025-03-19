@@ -71,17 +71,18 @@ const Dashboard = () => {
         const fetchData = async () => {
             try {
                 const posts = await fetchUserPosts(user._id);
-    
+
+                const backend_url = 'https://node42.cs.colman.ac.il';
                 // Keep `VITE_API_BASE_URL` for API calls, but remove `/api` for images
-                const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, ""); // Keep `/api` for API calls
-                const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
+                const apiBaseUrl = backend_url?.trim().replace(/\/$/, ""); // Keep `/api` for API calls
+                //const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
         
                 // Ensure post images are correctly formatted
                 const formattedPosts = posts.map((post: Post) => ({
                     ...post,
                     likes: post.likes ?? 0, // Ensure likes is always a number
                     imageUrl: post.imageUrl?.startsWith("/uploads/")
-                        ? `${imageBaseUrl}${post.imageUrl}` // Use `imageBaseUrl` (without `/api`)
+                        ? `${apiBaseUrl}${post.imageUrl}` // Use `imageBaseUrl` (without `/api`)
                         : post.imageUrl,
                 }));
         
@@ -93,7 +94,7 @@ const Dashboard = () => {
                 // Ensure the profile image is set correctly
                 if (user.profilePicture) {
                     newProfileImage = user.profilePicture.startsWith("/uploads/")
-                        ? `${imageBaseUrl}${user.profilePicture}`
+                        ? `${apiBaseUrl}${user.profilePicture}`
                         : user.profilePicture;
                 }
 
@@ -173,14 +174,15 @@ const Dashboard = () => {
         try {
             const newPost = await createPost({ title, content, image: image || undefined, token: user.accessToken });
     
-            // Ensure the image URL is formatted correctly
-            const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "");
-            const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
+            const backend_url = 'https://node42.cs.colman.ac.il';
+            // Keep `VITE_API_BASE_URL` for API calls, but remove `/api` for images
+            const apiBaseUrl = backend_url?.trim().replace(/\/$/, ""); // Keep `/api` for API calls
+            //const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
     
             const formattedPost = {
                 ...newPost,
                 imageUrl: newPost.imageUrl?.startsWith("/uploads/")
-                    ? `${imageBaseUrl}${newPost.imageUrl}`
+                    ? `${apiBaseUrl}${newPost.imageUrl}`
                     : newPost.imageUrl,
             };
     
@@ -214,14 +216,15 @@ const Dashboard = () => {
     
             const updatedPost = await updatePost(postId, formData);
     
-            // Ensure the updated image URL is formatted correctly
-            const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "");
-            const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
+            const backend_url = 'https://node42.cs.colman.ac.il';
+            // Keep `VITE_API_BASE_URL` for API calls, but remove `/api` for images
+            const apiBaseUrl = backend_url?.trim().replace(/\/$/, ""); // Keep `/api` for API calls
+            //const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
     
             const formattedUpdatedPost = {
                 ...updatedPost,
                 imageUrl: updatedPost.imageUrl?.startsWith("/uploads/")
-                    ? `${imageBaseUrl}${updatedPost.imageUrl}`
+                    ? `${apiBaseUrl}${updatedPost.imageUrl}`
                     : updatedPost.imageUrl,
             };
     

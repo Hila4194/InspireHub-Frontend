@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import apiClient from "../services/api-client";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
@@ -108,7 +108,7 @@ const LoginPage = () => {
                     <button type="submit" className="btn btn-primary w-100">Login</button>
                 </form>
                 <div className="text-center mt-3">
-                    <p>Don't have an account? <a href="/register">Register here</a></p>
+                    <p>Don't have an account? <Link to="/register">Register here</Link></p>
                 </div>
                 <div className="text-center mt-3">
                     <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginError} theme="outline" size="large" />

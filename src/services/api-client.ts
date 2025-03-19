@@ -3,12 +3,16 @@ import { useAuth } from "../context/AuthContext";
 
 export { CanceledError };
 
+const backend_url = import.meta.env.VITE_API_BASE_URL || 'https://node42.cs.colman.ac.il/api';
+console.log("url: " + backend_url);
+
 // Set base URL for API requests
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: backend_url,
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // Ensure authentication works
 });
 
 // Request Interceptor - Attach Authorization Header & Handle FormData

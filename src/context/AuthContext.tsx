@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, ReactNode, useContext } from
 import apiClient from "../services/api-client";
 import { AxiosError } from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const backend_url = import.meta.env.VITE_API_BASE_URL || 'https://node42.cs.colman.ac.il/api';
 
 // User Interface
 export interface User {
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (parsedUser.profilePicture.includes("googleusercontent.com")) {
                 console.log("✅ Google Profile Picture Detected:", parsedUser.profilePicture);
             } else if (parsedUser.profilePicture.startsWith("/uploads/")) {
-                parsedUser.profilePicture = `${API_BASE_URL}${parsedUser.profilePicture}`;
+                parsedUser.profilePicture = `${backend_url}${parsedUser.profilePicture}`;
             }
         } else {
             parsedUser.profilePicture = "/default-avatar.png"; // Default avatar fallback
@@ -58,28 +58,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  // Login Function
   const login = async (username: string, password: string) => {
     try {
-      const response = await apiClient.post<User>("/auth/login", { username, password });
-      const userData = response.data;
+        const response = await apiClient.post<User>("/auth/login", { username, password });
+        const userData = response.data;
 
-      // Ensure the profile picture URL is stored correctly
-      if (userData.profilePicture) {
-        if (userData.profilePicture.includes("googleusercontent.com")) {
-            console.log("🔍 Debug: Using Google Profile Picture:", userData.profilePicture);
-        } else if (!userData.profilePicture.startsWith("http")) {
-            userData.profilePicture = `${API_BASE_URL}${userData.profilePicture}`;
+        console.log("🔍 Debug: Received User Data:", userData); // Log full user data
+
+        // Ensure the profile picture URL is stored correctly
+        if (userData.profilePicture) {
+            if (userData.profilePicture.includes("googleusercontent.com")) {
+                console.log("🔍 Debug: Using Google Profile Picture:", userData.profilePicture);
+            } else if (!userData.profilePicture.startsWith("http")) {
+                userData.profilePicture = `${backend_url}${userData.profilePicture}`;
+            }
         }
-    }
 
-      setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        console.log("✅ Debug: User Data Stored in localStorage:", localStorage.getItem("user")); // Check storage
     } catch (error) {
-      console.error("❌ Login failed:", error);
-      throw new Error("Login failed");
+        console.error("❌ Login failed:", error);
+        throw new Error("Login failed");
     }
-  };
+};
 
   // Refresh Token Function
   const refreshAccessToken = async (): Promise<string | null> => {
@@ -137,7 +140,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
         // Ensure profile picture URL is absolute
         if (updatedUser.profilePicture && !updatedUser.profilePicture.startsWith("http")) {
-            updatedUser.profilePicture = `${API_BASE_URL}${updatedUser.profilePicture}`;
+            updatedUser.profilePicture = `${backend_url}${updatedUser.profilePicture}`;
         }
 
         setUser(updatedUser);
