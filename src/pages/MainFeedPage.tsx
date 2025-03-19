@@ -4,7 +4,7 @@ import "../styles/mainfeed.css";
 import { fetchMotivationalQuote, Quote } from "../services/quote-service";
 import { toggleLikePost } from "../services/post-service";
 import { AuthContext } from "../context/AuthContext";
-import avatar from "../assets/default-avatar.png"; // ✅ Import default avatar
+import avatar from "../assets/default-avatar.png";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 interface Post {
@@ -45,19 +45,21 @@ const MainFeedPage = () => {
         const postResponse = await apiClient.get<Post[]>(`/posts?limit=${PAGE_SIZE}&skip=${(page - 1) * PAGE_SIZE}`);
         const posts = postResponse.data;
 
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "");
-        const imageBaseUrl = apiBaseUrl.replace("/api", "");
+        const backend_url = 'https://node42.cs.colman.ac.il';
+        // Keep `VITE_API_BASE_URL` for API calls, but remove `/api` for images
+        const apiBaseUrl = backend_url?.trim().replace(/\/$/, ""); // Keep `/api` for API calls
+        //const imageBaseUrl = apiBaseUrl.replace("/api", ""); // Remove `/api` for images
 
         // Ensure correct profile picture & post image formatting
         const formattedPosts = posts.map((post: Post) => ({
           ...post,
           imageUrl: post.imageUrl?.startsWith("/uploads/")
-            ? `${imageBaseUrl}${post.imageUrl}`
+            ? `${apiBaseUrl}${post.imageUrl}`
             : post.imageUrl,
           sender: {
             ...post.sender,
             profilePicture: post.sender.profilePicture?.startsWith("/uploads/")
-              ? `${imageBaseUrl}${post.sender.profilePicture}`
+              ? `${apiBaseUrl}${post.sender.profilePicture}`
               : post.sender.profilePicture || avatar, // Use default avatar
           },
         }));
