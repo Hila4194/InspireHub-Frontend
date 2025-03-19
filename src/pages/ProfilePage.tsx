@@ -82,45 +82,45 @@ const ProfilePage: React.FC = () => {
     };
 
     // Handle profile update
-    const handleUpdate = async () => {
-        if (!user) return;
+const handleUpdate = async () => {
+    if (!user) return;
 
-        if (!validateUsername()) {
-            setMessage("❌ Fix the errors before updating.");
-            return;
+    if (!validateUsername()) {
+        setMessage("❌ Fix the errors before updating.");
+        return;
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append("username", username);
+        if (profilePicture) {
+            formData.append("profilePicture", profilePicture);
         }
 
-        try {
-            const formData = new FormData();
-            formData.append("username", username);
-            if (profilePicture) {
-                formData.append("profilePicture", profilePicture);
-            }
+        const response = await apiClient.put(`/auth/update-profile/${user._id}`, formData, {
+            headers: { Authorization: `JWT ${user.accessToken}` },
+        });
 
-            const response = await apiClient.put(`/auth/update-profile/${user._id}`, formData, {
-                headers: { Authorization: `JWT ${user.accessToken}` },
-            });
+        const updatedUser: User = response.data;
 
-            const updatedUser: User = response.data;
-
-            if (username !== user.username) {
-                setMessage("✅ Username updated! Logging out...");
-                setTimeout(() => {
-                    logout();
-                    navigate("/login");
-                }, 2000);
-            } else {
-                setMessage("✅ Profile updated successfully!");
-            }
-
-            setUser(updatedUser);
-            setPreviewImage(updatedUser.profilePicture); // Ensure updated image is displayed
-
-        } catch (error) {
-            console.error("❌ Error updating profile:", error);
-            setMessage("❌ Failed to update profile.");
+        if (username !== user.username || profilePicture) {
+            setMessage("✅ Profile updated! Logging out...");
+            setTimeout(() => {
+                logout();
+                navigate("/login");
+            }, 2000);
+        } else {
+            setMessage("✅ Profile updated successfully!");
         }
-    };
+
+        setUser(updatedUser);
+        setPreviewImage(updatedUser.profilePicture); // Ensure updated image is displayed
+
+    } catch (error) {
+        console.error("❌ Error updating profile:", error);
+        setMessage("❌ Failed to update profile.");
+    }
+};
 
     return (
         <div className="profile-container">
