@@ -6,6 +6,7 @@ import { toggleLikePost } from "../services/post-service";
 import { AuthContext } from "../context/AuthContext";
 import avatar from "../assets/default-avatar.png";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { useNavigate } from "react-router-dom";
 
 interface Post {
   _id: string;
@@ -33,10 +34,9 @@ const MainFeedPage = () => {
   const [loading, setLoading] = useState(true);
   const [quote, setQuote] = useState<Quote | null>(null);
   const [quoteFetched, setQuoteFetched] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [newComment, setNewComment] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -108,44 +108,6 @@ const MainFeedPage = () => {
     }
   };
 
-  // Open Comments Popup
-  const openCommentsPopup = (post: Post) => {
-    setSelectedPost(post);
-  };
-
-  // Close Comments Popup
-  const closeCommentsPopup = () => {
-    setSelectedPost(null);
-    setNewComment("");
-  };
-
-  // Handle Adding a Comment (Closes popup after posting)
-  const handleAddComment = async () => {
-    if (!selectedPost || !user) return;
-    if (!newComment.trim()) return alert("Please enter a comment!");
-
-    try {
-      const response = await apiClient.post("/comments", {
-        content: newComment,
-        sender: user._id,
-        postId: selectedPost._id
-      });
-
-      const newCommentObj = response.data;
-
-      setPosts(posts.map(post =>
-        post._id === selectedPost._id
-          ? { ...post, comments: [...post.comments, newCommentObj] }
-          : post
-      ));
-
-      setNewComment("");
-      closeCommentsPopup(); // Close popup after posting
-    } catch (error) {
-      console.error("❌ Error adding comment:", error);
-    }
-  };
-
   return (
     <div className="main-feed-container">
       <h2 className="main-feed-title" style={{ color: "white", textDecoration: "underline" }}>Main Feed</h2>
@@ -196,7 +158,9 @@ const MainFeedPage = () => {
                   <button onClick={() => handleLike(post._id)} className="like-button">
                     {post.likedByUser ? "❤️ Unlike" : "🤍 Like"}
                   </button>
-                  <button onClick={() => openCommentsPopup(post)} className="comment-button">💬 Comment</button>
+                  <button onClick={() => navigate(`/comments/${post._id}`)} className="view-comments-button">
+                   🗨 Comments
+                  </button>
                 </div>
               </CSSTransition>
             ))
@@ -213,38 +177,6 @@ const MainFeedPage = () => {
           Next ▶
         </button>
       </div>
-
-      {selectedPost && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <button className="close-btn" onClick={closeCommentsPopup}>✖</button>
-            <h3>Comments on post: "{selectedPost.title}"</h3>
-
-            <div className="comments-list">
-              {selectedPost.comments.length > 0 ? (
-                selectedPost.comments.map((comment) => (
-                  <div key={comment._id} className="comment">
-                    <strong>{comment.sender.username}</strong>: {comment.content}
-                  </div>
-                ))
-              ) : (
-                <p>No comments yet. Be the first to comment!</p>
-              )}
-            </div>
-
-            <div className="comment-input-container">
-              <input
-                type="text"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Write a comment..."
-                className="comment-input"
-              />
-              <button onClick={handleAddComment} className="btn btn-primary">Post</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
